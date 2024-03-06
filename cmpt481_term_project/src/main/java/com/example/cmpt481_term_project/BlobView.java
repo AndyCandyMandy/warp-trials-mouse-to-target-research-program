@@ -56,10 +56,8 @@ public class BlobView extends StackPane implements BlobModelListener, IModelList
                 } else {
                     gc.setFill(Color.BEIGE);
                 }
-                gc.fillOval(b.x - b.r, b.y - b.r, b.r * 2, b.r * 2);
                 gc.setFill(Color.BLACK);
                 //gc.setFont(new Font());
-                gc.fillText(String.valueOf(blobNumber), b.x, b.y);
                 blobNumber++;
             }
 
@@ -91,7 +89,6 @@ public class BlobView extends StackPane implements BlobModelListener, IModelList
 
             gc.setFill(Color.ORANGE);
             Blob currBlob = model.getBlobs().get(iModel.getCurrentTargetIndex());
-            gc.fillOval(currBlob.x - currBlob.r, currBlob.y - currBlob.r, currBlob.r * 2, currBlob.r * 2);
 
         }
 

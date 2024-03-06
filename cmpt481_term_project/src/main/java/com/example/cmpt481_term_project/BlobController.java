@@ -1,3 +1,9 @@
+/*
+NAME: Jesse Paterson
+NSID: xgm608
+STUDENT NUMBER: 11310937
+COURSE: CMPT381
+*/
 package com.example.cmpt481_term_project;
 
 import javafx.geometry.Point2D;
@@ -7,128 +13,221 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class BlobController {
+public class BlobController
+{
     BlobModel model;
     InteractionModel iModel;
     double prevX, prevY;
+    double firstX, firstY;
     double dX, dY;
-
+    long startTime;
+    long finishTime;
     enum State {READY, PREPARE_CREATE, DRAGGING, RESIZING, DRAG_SELECT, TRAINING_MODE}
-
     State currentState = State.READY;
 
-    public void handleDiagramKeyPress(KeyEvent keyEvent) {
-        switch (currentState) {
+    /**
+     * Handles a key press
+     * @param keyEvent - The key event
+     */
+    public void handleDiagramKeyPress(KeyEvent keyEvent)
+    {
+        switch (currentState)
+        {
             case READY -> {
-                if (iModel.getSelected().size() != 0 && keyEvent.getCode() == KeyCode.DELETE) {
+                if (iModel.getSelected().size() != 0 && keyEvent.getCode() == KeyCode.DELETE)
+                {
                     // delete the selected node and all associated links
-                    model.deleteSelectedBlobs(iModel.getSelected());
+                    DeleteBlobCommand deleteBlobCommand = new DeleteBlobCommand(model, iModel.getSelected());
+                    deleteBlobCommand.doCommand();
+                    iModel.addCommand(deleteBlobCommand);
                     iModel.unselect();
-                } else if (iModel.getSelected().size() != 0 && keyEvent.getCode() == KeyCode.C && keyEvent.isControlDown()) {
+                } else if (iModel.getSelected().size() != 0 && keyEvent.getCode() == KeyCode.C && keyEvent.isControlDown())
+                {
                     iModel.copySelected();
-                } else if (iModel.getSelected().size() != 0 && keyEvent.getCode() == KeyCode.X && keyEvent.isControlDown()) {
+                } else if (iModel.getSelected().size() != 0 && keyEvent.getCode() == KeyCode.X && keyEvent.isControlDown())
+                {
                     iModel.cutSelected();
-                    model.deleteSelectedBlobs(iModel.getSelected());
+                    DeleteBlobCommand deleteBlobCommand = new DeleteBlobCommand(model, iModel.getSelected());
+                    deleteBlobCommand.doCommand();
+                    iModel.addCommand(deleteBlobCommand);
                     iModel.unselect();
-                } else if (keyEvent.getCode() == KeyCode.V && keyEvent.isControlDown()) {
+                } else if (keyEvent.getCode() == KeyCode.V && keyEvent.isControlDown())
+                {
                     ArrayList<Blob> blobsToAdd = iModel.pasteFromClipboard();
-                    model.copyBlobsToModel(blobsToAdd);
-                } else if (keyEvent.getCode() == KeyCode.T && keyEvent.isControlDown()) {
-                    if (model.getBlobs().size() > 0) {
-                        System.out.println("Put into training mode");
+                    CreateBlobCommand createBlobCommand = new CreateBlobCommand(model, blobsToAdd);
+                    createBlobCommand.doCommand();
+                    iModel.addCommand(createBlobCommand);
+                } else if (keyEvent.getCode() == KeyCode.T && keyEvent.isControlDown())
+                {
+                    if (model.getBlobs().size() > 0)
+                    {
+                        //System.out.println("Entered training mode");
                         currentState = State.TRAINING_MODE;
-                        iModel.setTrainingFlag(true);
+                        startTime = 0;
+                        finishTime = 0;
+                        iModel.enableTrainingMode();
                     }
+                } else if (keyEvent.getCode() == KeyCode.Z && keyEvent.isControlDown())
+                {
+                    // undo
+                    iModel.undo();
+                } else if (keyEvent.getCode() == KeyCode.R && keyEvent.isControlDown())
+                {
+                    // redo
+                    iModel.redo();
+                } else if (keyEvent.getCode() == KeyCode.E && keyEvent.isControlDown())
+                {
+                    currentState = State.READY;
+                    iModel.enableEditorMode();
                 }
             }
+            case TRAINING_MODE -> {
+                if (keyEvent.getCode() == KeyCode.E && keyEvent.isControlDown())
+                {
+                    currentState = State.READY;
+                    iModel.enableEditorMode();
+                }
+            }
+
         }
     }
 
-
-    public BlobController() {
-
+    /**
+     * Empty constructor
+     */
+    public BlobController()
+    {
     }
 
-    public void setModel(BlobModel newModel) {
+    /**
+     * Sets the controllers model
+     * @param newModel the model
+     */
+    public void setModel(BlobModel newModel)
+    {
         model = newModel;
     }
 
-    public void setIModel(InteractionModel newIModel) {
+    /**
+     * Sets the controllers I model
+     * @param newIModel the new I model
+     */
+    public void setIModel(InteractionModel newIModel)
+    {
         iModel = newIModel;
     }
 
-    public void handlePress(MouseEvent event) {
-        switch (currentState) {
+    /**
+     * Handles a mouse press
+     * @param event - The mouse event
+     */
+    public void handlePress(MouseEvent event)
+    {
+        switch (currentState)
+        {
             case READY -> {
-                if (!event.isShiftDown() && model.hitBlob(event.getX(), event.getY())) {
+                if (model.hitBlob(event.getX(), event.getY()))
+                {
                     Blob b = model.whichHit(event.getX(), event.getY());
-                    if (event.isControlDown()) {
-                        if (iModel.getSelected().contains(b)) {
+                    if (event.isControlDown())
+                    {
+                        if (iModel.getSelected().contains(b))
+                        {
                             iModel.removeSelectedBlob(b);
-                        } else {
+                        } else
+                        {
                             iModel.addSelectedBlob(b);
                         }
-                    } else {
-                        iModel.unselect();
-                        iModel.addSelectedBlob(b);
+                    } else
+                    {
+                        if (!iModel.getSelected().contains(b))
+                        {
+                            iModel.unselect();
+                            iModel.addSelectedBlob(b);
+                        }
                     }
                     prevX = event.getX();
                     prevY = event.getY();
-                    currentState = State.DRAGGING;
-                } else if (event.isShiftDown() && model.hitBlob(event.getX(), event.getY())) {
-                    Blob b = model.whichHit(event.getX(), event.getY());
-                    if (event.isControlDown()) {
-                        if (iModel.getSelected().contains(b)) {
-                            iModel.removeSelectedBlob(b);
-                        } else {
-                            iModel.addSelectedBlob(b);
-                        }
-                    } else {
-                        iModel.unselect();
-                        iModel.addSelectedBlob(b);
+                    firstX = event.getX();
+                    firstY = event.getY();
+                    if (event.isShiftDown())
+                    {
+                        currentState = State.RESIZING;
+                    } else
+                    {
+                        currentState = State.DRAGGING;
                     }
-                    prevX = event.getX();
-                    prevY = event.getY(); // TODO: probably dont need Y for resize
-                    currentState = State.RESIZING;
-                } else if (event.isShiftDown()) {
+                } else if (event.isShiftDown())
+                {
                     currentState = State.PREPARE_CREATE;
-                } else if (!model.hitBlob(event.getX(), event.getY())) {
-//                    iModel.unselect();
+                } else if (!model.hitBlob(event.getX(), event.getY()))
+                {
+                    iModel.unselect();
                     // enter lasso select mode
                     currentState = State.DRAG_SELECT;
                 }
             }
             case TRAINING_MODE -> {
-                if (model.hitBlob(event.getX(), event.getY()))
+                if (model.hitTarget(iModel.getCurrentTargetIndex(), (int) event.getX(), (int) event.getY()))
                 {
-                    Blob hitBlob = model.whichHit(event.getX(), event.getY());
-                    if (hitBlob == model.getBlobs().get(iModel.currentTargetIndex))
+                    if (iModel.getCurrentTargetIndex() != 0)
                     {
-                        // increment
-                        int nextIndex = iModel.currentTargetIndex + 1;
-                        iModel.setCurrentTargetIndex(nextIndex);
-                        System.out.println(iModel.getCurrentTargetIndex());
+                        // create Trial Record
+                        finishTime = System.currentTimeMillis();
+                        long elapsedTime = finishTime - startTime;
+                        // ID = log2(2D/W)
+                        double distanceDoubled = 2 * calculateDistanceBetweenBlobs(model.getBlobs().get(iModel.getCurrentTargetIndex() - 1), model.getBlobs().get(iModel.getCurrentTargetIndex()));
+                        double width = model.getBlobs().get(iModel.getCurrentTargetIndex()).getRadius() * 2;
+                        double id = Math.log((distanceDoubled / width)) / Math.log(2);
+                        TrialRecord newTrial = new TrialRecord(elapsedTime,id);
+                        iModel.addDataPoint(newTrial.indexOfDifficulty, newTrial.timeElapsedMilliseconds);
                     }
-                    if (iModel.getCurrentTargetIndex() == model.getBlobs().size()) // TODO: fix
+                    startTime = System.currentTimeMillis();
+
+                    // increment
+                    int nextIndex = iModel.getCurrentTargetIndex() + 1;
+                    if (nextIndex != model.getBlobs().size())
                     {
-                        System.out.println("Here");
+                        iModel.incrementTargetIndex();
+                    }
+                    if (nextIndex == model.getBlobs().size())
+                    {
                         currentState = State.READY;
-                        iModel.setTrainingFlag(false);
-                        iModel.setCurrentTargetIndex(0);
+                        // System.out.println("Training Over");
+                        iModel.enableEditorMode();
+                        iModel.enableReportMode();
+                        startTime = 0;
+                        finishTime = 0;
                     }
                 }
             }
         }
     }
 
-    public void handleDragged(MouseEvent event) {
-        switch (currentState) {
-            case PREPARE_CREATE -> {
-                currentState = State.READY;
-            }
+    /**
+     * Calculates distance between two blobs
+     * @param b1 - first blob
+     * @param b2 - second blob
+     * @return - the distance between them
+     */
+    public double calculateDistanceBetweenBlobs(Blob b1, Blob b2)
+    {
+        return Math.sqrt((b2.getY() - b1.getY()) * (b2.getY() - b1.getY()) + (b2.getX() - b1.getX()) * (b2.getX() - b1.getX()));
+    }
+
+    /**
+     * Handles a mouse drag event
+     * @param event - The mouse event
+     */
+    public void handleDragged(MouseEvent event)
+    {
+        switch (currentState)
+        {
+            case PREPARE_CREATE -> currentState = State.READY;
             case DRAGGING -> {
                 dX = event.getX() - prevX;
                 dY = event.getY() - prevY;
@@ -150,33 +249,111 @@ public class BlobController {
         }
     }
 
-    public void handleReleased(PixelReader reader, MouseEvent event) {
-        switch (currentState) {
+    /**
+     * Handles a mouse button release event
+     * @param reader - The offscreen canvas reader for lasso selection
+     * @param event  - The mouse event
+     */
+    public void handleReleased(PixelReader reader, MouseEvent event)
+    {
+        switch (currentState)
+        {
             case PREPARE_CREATE -> {
-                model.addBlob(event.getX(), event.getY());
+                Blob newBlob = new Blob(event.getX(), event.getY());
+                ArrayList<Blob> newList = new ArrayList<>();
+                newList.add(newBlob);
+                CreateBlobCommand createBlobCommand = new CreateBlobCommand(model, newList);
+                iModel.addCommand(createBlobCommand);
+                createBlobCommand.doCommand();
                 currentState = State.READY;
             }
-            case DRAGGING, RESIZING -> {
+            case DRAGGING -> {
+                if ((int) ((firstX - prevX) + (firstY - prevY)) != 0)
+                {
+                    MoveBlobsCommand moveCommand = new MoveBlobsCommand(model, iModel.getSelected(), (int) (firstX - prevX), (int) (firstY - prevY));
+                    iModel.addCommand(moveCommand);
+                }
+                currentState = State.READY;
+            }
+            case RESIZING -> {
+                if ((int) (firstX - prevX) != 0)
+                {
+                    ResizeBlobCommand resizeBlobCommand = new ResizeBlobCommand(model, iModel.getSelected(), (int) (firstX - prevX));
+                    iModel.addCommand(resizeBlobCommand);
+                }
                 currentState = State.READY;
             }
             case DRAG_SELECT -> {
                 // actually perform the selection
-                ArrayList<Blob> lassoSelected = new ArrayList<>();
-                if (iModel.getLassoPoints().size() > 0) {
-                    for (Blob blob : model.getBlobs()) {
-                        // check if blobs pixel is RED in the pixel reader
-                        if (reader.getColor((int) blob.x, (int) blob.y).equals(Color.RED)) {
-                            lassoSelected.add(blob);
+                ArrayList<Blob> lassoSelectedBlobs = new ArrayList<>();
+                ArrayList<Blob> rectSelectedBlobs = new ArrayList<>();
+
+                if (iModel.getLassoPoints().size() > 0)
+                {
+                    // select via lasso
+                    for (Blob blob : model.getBlobs())
+                    {
+                        // check if blobs center pixel is RED in the pixel reader
+                        if (reader.getColor((int) blob.getX(), (int) blob.getY()).equals(Color.RED))
+                        {
+                            lassoSelectedBlobs.add(blob);
                         }
 
+                        // get rectangle selection
+                        int lastIndex = iModel.getLassoPoints().size() - 1;
+                        double x1 = iModel.getLassoPoints().get(0).getX();
+                        double y1 = iModel.getLassoPoints().get(0).getY();
+                        double x2 = iModel.getLassoPoints().get(lastIndex).getX();
+                        double y2 = iModel.getLassoPoints().get(lastIndex).getY();
+                        Point2D topLeft;
+                        Point2D bottomRight;
+                        if (x2 < x1 && y2 < y1) // drawn bottom right to top left
+                        {
+                            topLeft = new Point2D(x2, y2);
+                            bottomRight = new Point2D(x1, y1);
+                        } else if (x2 > x1 && y2 < y1) // drawn bottom left to top right
+                        {
+                            topLeft = new Point2D(x1, y2);
+                            bottomRight = new Point2D(x2, y1);
+                        } else if (x2 < x1 && y2 > y1) // drawn top right to bottom left
+                        {
+                            topLeft = new Point2D(x2, y1);
+                            bottomRight = new Point2D(x1, y2);
+                        } else // drawn top left to bottom right
+                        {
+                            topLeft = new Point2D(x1, y1);
+                            bottomRight = new Point2D(x2, y2);
+                        }
+                        // make rectangle selection
+                        if (topLeft.getX() <= blob.getX() && bottomRight.getX() >= blob.getX())
+                        {
+                            if (topLeft.getY() <= blob.getY() && bottomRight.getY() >= blob.getY())
+                            {
+                                // blob center point in within rectangle
+                                rectSelectedBlobs.add(blob);
+                            }
+                        }
                     }
                 }
+                // choose blob selection with most blobs
+                ArrayList<Blob> blobSelectionToUse;
+                if (lassoSelectedBlobs.size() > rectSelectedBlobs.size())
+                {
+                    blobSelectionToUse = lassoSelectedBlobs;
+                } else
+                {
+                    blobSelectionToUse = rectSelectedBlobs;
+                }
 
-                if (event.isControlDown()) {
-                    ArrayList<Blob> toggledSelection = toggleSelected(iModel.getSelected(), lassoSelected);
+                // toggle blob selection if control is down
+                if (event.isControlDown())
+                {
+                    ArrayList<Blob> toggledSelection = toggleSelected(iModel.getSelected(), blobSelectionToUse);
                     iModel.setSelectedBlobs(toggledSelection);
-                } else {
-                    iModel.setSelectedBlobs(lassoSelected);
+                } else
+                {
+                    // select the blobs
+                    iModel.setSelectedBlobs(blobSelectionToUse);
                 }
                 iModel.clearLassoPoints();
                 currentState = State.READY;
@@ -185,12 +362,22 @@ public class BlobController {
         }
     }
 
-    private ArrayList<Blob> toggleSelected(ArrayList<Blob> selected, ArrayList<Blob> lassoSelected) {
-        ArrayList<Blob> newSelection = new ArrayList<>(lassoSelected);
-        for (Blob selectedBlob : selected) {
-            if (lassoSelected.contains(selectedBlob)) {
+    /**
+     * Helper method for toggling selected blobs
+     * @param selected         - the currently selected
+     * @param newSelectedBlobs - the lasso selected blobs
+     * @return - Returns the toggle selected arraylist of blobs
+     */
+    private ArrayList<Blob> toggleSelected(ArrayList<Blob> selected, ArrayList<Blob> newSelectedBlobs)
+    {
+        ArrayList<Blob> newSelection = new ArrayList<>(newSelectedBlobs);
+        for (Blob selectedBlob : selected)
+        {
+            if (newSelectedBlobs.contains(selectedBlob))
+            {
                 newSelection.remove(selectedBlob);
-            } else {
+            } else
+            {
                 newSelection.add(selectedBlob);
             }
         }

@@ -7,9 +7,10 @@ COURSE: CMPT381
 package com.example.cmpt481_term_project;
 
 /**
- * Listener interface for the Interaction model
+ * Command interface
  */
-public interface IModelListener
+public interface TargetCommand
 {
-    void iModelChanged();
+    void doCommand();
+    void undoCommand();
 }

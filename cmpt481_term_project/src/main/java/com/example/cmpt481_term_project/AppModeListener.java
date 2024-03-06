@@ -7,9 +7,9 @@ COURSE: CMPT381
 package com.example.cmpt481_term_project;
 
 /**
- * Listener interface for the Interaction model
+ * Listener interface for the Application mode
  */
-public interface IModelListener
+public interface AppModeListener
 {
-    void iModelChanged();
+    void AppModeChanged();
 }
