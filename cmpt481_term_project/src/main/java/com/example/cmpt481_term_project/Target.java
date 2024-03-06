@@ -1,29 +1,31 @@
 /*
-NAME: Jesse Paterson
-NSID: xgm608
-STUDENT NUMBER: 11310937
-COURSE: CMPT381
+NAMES: Aaron Mee, Siddharth Padakanti, Andy Giang, Jesse Paterson
+NSIDS: ajm403, kca647, iaz102, xgm608
+STUDENT NUMBER: 11173570, 11311844, 11326516, 11310937
+COURSE: CMPT481 - Term Project
 */
 package com.example.cmpt481_term_project;
 
-public class Blob
+public class Target
 {
     private double x, y, r;
+    private boolean selected;
 
     /**
-     * Creates new blob
+     * Creates new target
      * @param nx - x coordinate
      * @param ny - y coordinate
      */
-    public Blob(double nx, double ny)
+    public Target(double nx, double ny, double ry)
     {
         x = nx;
         y = ny;
-        r = 50;
+        r = ry;
+        selected = false;
     }
 
     /**
-     * Gets the blob radius
+     * Gets the target radius
      * @return radius
      */
     public double getRadius()
@@ -31,20 +33,6 @@ public class Blob
         return this.r;
     }
 
-    /**
-     * Sets the radius
-     * @param newRadius the new radius
-     */
-    public void setRadius(double newRadius)
-    {
-        if (newRadius > 5)
-        {
-            this.r = newRadius;
-        } else
-        {
-            r = 5;
-        }
-    }
 
     /**
      * Gets the x position
@@ -65,18 +53,17 @@ public class Blob
     }
 
     /**
-     * Moves the blob
-     * @param dx - the change in x
-     * @param dy - the change in y
+     * Returns the selection status of the target
+     * @return teh y coordinate
      */
-    public void move(double dx, double dy)
+    public boolean isSelected()
     {
-        x += dx;
-        y += dy;
+        return this.selected;
     }
 
+
     /**
-     * Returns a boolean of if a point is within the blob
+     * Returns a bool of if a point is within the target
      * @param cx - the point x coordinate
      * @param cy - the point y coordinate
      * @return - true if it is contained, false otherwise
@@ -84,6 +71,20 @@ public class Blob
     public boolean contains(double cx, double cy)
     {
         return dist(cx, cy, x, y) <= r;
+    }
+
+    /**
+     * Selects the current target
+     */
+    public void select() {
+        this.selected = true;
+    }
+
+    /**
+     * Deselects the current target
+     */
+    public void deselect() {
+        this.selected = false;
     }
 
     /**
@@ -98,4 +99,5 @@ public class Blob
     {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
+
 }

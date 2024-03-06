@@ -1,70 +1,45 @@
 /*
-NAME: Jesse Paterson
-NSID: xgm608
-STUDENT NUMBER: 11310937
-COURSE: CMPT381
+NAMES: Aaron Mee, Siddharth Padakanti, Andy Giang, Jesse Paterson
+NSIDS: ajm403, kca647, iaz102, xgm608
+STUDENT NUMBER: 11173570, 11311844, 11326516, 11310937
+COURSE: CMPT481 - Term Project
 */
 package com.example.cmpt481_term_project;
 
 import javafx.scene.layout.StackPane;
 
-public class MainUI extends StackPane implements AppModeListener
+public class MainUI extends StackPane
 {
+    AppView appView;
+    AppModel model;
+    AppController controller;
 
-    InteractionModel iModel;
-    ReportView reportView;
-    EditorView editorView;
+    private int w = 1500;
+    private int h = 900;
+
     /**
      * Sets up the views, model, IModel, and controller as well as linking
      */
     public MainUI()
     {
-        BlobModel model = new BlobModel();
-        BlobController controller = new BlobController();
-        ReportController reportController = new ReportController();
-        editorView = new EditorView(800,800);
-        reportView = new ReportView(800,800);
+        model = new AppModel(w,h);
+        controller = new AppController();
+        appView = new AppView();
 
-        editorView.setMaxHeight(Double.MAX_VALUE);
-        editorView.setMaxWidth(Double.MAX_VALUE);
-        editorView.setMinHeight(0);
-        editorView.setMinWidth(0);
-
-        reportView.setMaxHeight(Double.MAX_VALUE);
-        reportView.setMaxWidth(Double.MAX_VALUE);
-        reportView.setMinHeight(0);
-        reportView.setMinWidth(0);
-
-        this.iModel = new InteractionModel();
-        iModel.addModeSubscriber(this);
         controller.setModel(model);
-        editorView.setModel(model);
-        reportView.setModel(model);
-        controller.setIModel(iModel);
-        editorView.setIModel(iModel);
-        reportView.setIModel(iModel);
-        model.addSubscriber(editorView);
-        iModel.addSubscriber(editorView);
-        editorView.setController(controller);
-        reportView.setController(reportController);
-        // TODO: set report view controller
-        this.getChildren().addAll( editorView, reportView);
-        reportView.setVisible(false);
-        editorView.setVisible(true);
-        this.setOnKeyPressed(controller::handleDiagramKeyPress);
+        appView.setModel(model);
+
+        model.addSubscriber(appView);
+
+        appView.setController(controller);
+
+        this.getChildren().addAll(appView);
+        appView.setVisible(true);
+        appView.modelChanged();
+
+        // MainUI has keyboard focus - pass key events to controller
+        this.setOnKeyPressed(controller::handleKeyRelease);
+
     }
 
-    @Override
-    public void AppModeChanged()
-    {
-        if (iModel.getAppMode() == InteractionModel.AppMode.REPORT)
-        {
-            editorView.setVisible(false);
-            reportView.setVisible(true);
-        } else
-        {
-            editorView.setVisible(true);
-            reportView.setVisible(false);
-        }
-    }
 }
