@@ -8,8 +8,7 @@ package com.example.cmpt481_term_project;
 
 import javafx.scene.layout.StackPane;
 
-public class MainUI extends StackPane
-{
+public class MainUI extends StackPane {
     AppView appView;
     AppModel model;
     AppController controller;
@@ -20,9 +19,8 @@ public class MainUI extends StackPane
     /**
      * Sets up the views, model, IModel, and controller as well as linking
      */
-    public MainUI()
-    {
-        model = new AppModel(w,h);
+    public MainUI() {
+        model = new AppModel(w, h);
         controller = new AppController();
         appView = new AppView();
 

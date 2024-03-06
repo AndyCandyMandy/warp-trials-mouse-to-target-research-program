@@ -9,7 +9,6 @@ package com.example.cmpt481_term_project;
 /**
  * Listener interface to listen to blob model
  */
-public interface AppModelListener
-{
+public interface AppModelListener {
     void modelChanged();
 }

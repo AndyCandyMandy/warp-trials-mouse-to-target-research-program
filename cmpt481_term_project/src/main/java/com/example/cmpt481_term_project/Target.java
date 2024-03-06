@@ -6,18 +6,20 @@ COURSE: CMPT481 - Term Project
 */
 package com.example.cmpt481_term_project;
 
-public class Target
-{
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
+public class Target {
     private double x, y, r;
     private boolean selected;
 
     /**
      * Creates new target
+     *
      * @param nx - x coordinate
      * @param ny - y coordinate
      */
-    public Target(double nx, double ny, double ry)
-    {
+    public Target(double nx, double ny, double ry) {
         x = nx;
         y = ny;
         r = ry;
@@ -25,51 +27,70 @@ public class Target
     }
 
     /**
+     * Draws the current target
+     *
+     * @param gc        - GraphicsContext to use to draw
+     * @param targetNum - Number drawn inside target
+     */
+    public void draw(GraphicsContext gc, int targetNum) {
+        if (selected) {
+            gc.setFill(Color.TOMATO);
+        } else {
+            gc.setFill(Color.LIGHTBLUE);
+        }
+        gc.setStroke(Color.BLACK);
+        gc.fillOval(x - r, y - r, r * 2, r * 2);
+        gc.strokeOval(x - r, y - r, r * 2, r * 2);
+        gc.setFill(Color.BLACK);
+        gc.fillText(String.valueOf(targetNum), x, y);
+    }
+
+    /**
      * Gets the target radius
+     *
      * @return radius
      */
-    public double getRadius()
-    {
+    public double getRadius() {
         return this.r;
     }
 
 
     /**
      * Gets the x position
+     *
      * @return teh x coordinate
      */
-    public double getX()
-    {
+    public double getX() {
         return x;
     }
 
     /**
      * Gets the y position
+     *
      * @return teh y coordinate
      */
-    public double getY()
-    {
+    public double getY() {
         return y;
     }
 
     /**
      * Returns the selection status of the target
+     *
      * @return teh y coordinate
      */
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return this.selected;
     }
 
 
     /**
      * Returns a bool of if a point is within the target
+     *
      * @param cx - the point x coordinate
      * @param cy - the point y coordinate
      * @return - true if it is contained, false otherwise
      */
-    public boolean contains(double cx, double cy)
-    {
+    public boolean contains(double cx, double cy) {
         return dist(cx, cy, x, y) <= r;
     }
 
@@ -89,14 +110,14 @@ public class Target
 
     /**
      * Returns the distance of one point to another
+     *
      * @param x1 x coordinate 1
      * @param y1 y coordinate 1
      * @param x2 x coordinate 2
      * @param y2 y coordinate 2
      * @return The distance between the two points
      */
-    private double dist(double x1, double y1, double x2, double y2)
-    {
+    private double dist(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 

@@ -13,16 +13,17 @@ import java.util.*;
 public class AppModel {
     private List<AppModelListener> subscribers;
     private List<Target> targets;
-
+    private List<WarpLocation> warps;
+    private boolean showWarps;
     private int height;
     private int width;
     private int numTargets;
-
     private int numTrials;
-
     private int targetRadius;
-
     private int currTarget;
+
+
+
 
     public enum AppMode {MECH_SELECT, PRE_TRIAL, TRIAL, DONE}
 
@@ -31,8 +32,8 @@ public class AppModel {
     public enum Mechanism {GRID, USR_KEY, SYS_DEF, FLICK}
 
     private Mechanism currentMechanism;
-
     Random random = new Random();
+
 
     /**
      * Creates new app model
@@ -40,12 +41,14 @@ public class AppModel {
     public AppModel(int w, int h) {
         subscribers = new ArrayList<>();
         targets = new ArrayList<>();
+        warps = new ArrayList<>();
 
         this.width = w;
         this.height = h;
         this.targetRadius = 30;
         this.numTargets = 50;
         this.numTrials = 10;
+        this.showWarps = false;
 
         this.currentMode = AppMode.MECH_SELECT;
     }
@@ -58,6 +61,40 @@ public class AppModel {
     public void addTarget(Target newTarget) {
         targets.add(newTarget);
         notifySubscribers();
+    }
+
+    /**
+     * Adds a new warp location
+     *
+     * @param newWarp - the new warp location
+     */
+    public void addWarp(WarpLocation newWarp) {
+        warps.add(newWarp);
+        notifySubscribers();
+    }
+
+    /**
+     * Toggles the showing of warp locations
+     */
+    public void toggleWarps() {
+        this.showWarps = !this.showWarps;
+        notifySubscribers();
+    }
+
+    /**
+     * Method for getting list of warps
+     * @return - Returns the WarpLocation ArrayList
+     */
+    public List<WarpLocation> getWarps() {
+        return warps;
+    }
+
+    /**
+     * Returns if warps are toggled to be visible
+     * @return
+     */
+    public boolean isWarpsVisible() {
+        return showWarps;
     }
 
     /**
@@ -114,7 +151,7 @@ public class AppModel {
             // Deselect old target
             targets.get(currTarget).deselect();
             // Select new target
-            while(currTarget == oldTarget) {
+            while (currTarget == oldTarget) {
                 this.currTarget = random.nextInt(numTargets);
             }
             targets.get(currTarget).select();
@@ -180,7 +217,7 @@ public class AppModel {
 
         for (int i = 0; i < numTargets; i++) {
             // create targets and give it random coords with no overlaps
-            while(true) {
+            while (true) {
                 boolean overlap = false;
                 int targetX = random.nextInt(maxX - min + 1) + min;
                 int targetY = random.nextInt(maxY - min + 1) + min;

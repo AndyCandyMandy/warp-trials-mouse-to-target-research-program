@@ -8,21 +8,19 @@ package com.example.cmpt481_term_project;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
-import java.util.Objects;
-
-public class AppController
-{
+public class AppController {
     AppModel model;
 
     /**
      * Handles a key press
+     *
      * @param keyEvent - The key event
      */
-    public void handleKeyRelease(KeyEvent keyEvent)
-    {
-        switch (model.getCurrentMode()){
+    public void handleKeyRelease(KeyEvent keyEvent) {
+        switch (model.getCurrentMode()) {
             case MECH_SELECT -> {
                 if (keyEvent.getCode() == KeyCode.DIGIT1 || keyEvent.getCode() == KeyCode.DIGIT2 ||
                         keyEvent.getCode() == KeyCode.DIGIT3 || keyEvent.getCode() == KeyCode.DIGIT4) {
@@ -35,6 +33,11 @@ public class AppController
                     model.nextMode();
                 }
             }
+            case TRIAL -> {
+                 if (keyEvent.getCode() == KeyCode.W) {
+                    model.toggleWarps();
+                }
+            }
             case DONE -> {
                 model.nextMode();
             }
@@ -44,38 +47,41 @@ public class AppController
     /**
      * Empty constructor
      */
-    public AppController()
-    {
+    public AppController() {
     }
 
     /**
      * Sets the controllers model
+     *
      * @param newModel the model
      */
-    public void setModel(AppModel newModel)
-    {
+    public void setModel(AppModel newModel) {
         model = newModel;
     }
 
 
     /**
      * Handles a mouse press
+     *
      * @param event - The mouse event
      */
-    public void handlePress(MouseEvent event)
-    {
+    public void handlePress(MouseEvent event) {
 
     }
 
     /**
      * Handles a mouse button release event
-     * @param event  - The mouse event
+     *
+     * @param event - The mouse event
      */
-    public void handleReleased(MouseEvent event)
-    {
+    public void handleReleased(MouseEvent event) {
         switch (model.getCurrentMode()) {
             case TRIAL -> {
-                model.recordClick(event.getX(), event.getY());
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    model.recordClick(event.getX(), event.getY());
+                } else if (event.getButton() == MouseButton.SECONDARY) {
+                    model.addWarp(new WarpLocation(event.getX(), event.getY()));
+                }
             }
         }
 

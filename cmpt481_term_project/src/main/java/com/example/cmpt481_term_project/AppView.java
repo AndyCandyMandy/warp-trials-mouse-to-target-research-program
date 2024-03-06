@@ -8,7 +8,6 @@ package com.example.cmpt481_term_project;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -57,20 +56,14 @@ public class AppView extends StackPane implements AppModelListener {
                 gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 10));
                 // draw targets
                 int targetNumber = 1;
-                for (Target t : model.getTargets())
-                {
-                    if (t.isSelected())
-                    {
-                        gc.setFill(Color.TOMATO);
-                    } else
-                    {
-                        gc.setFill(Color.LIGHTBLUE);
-                    }
-                    gc.fillOval(t.getX() - t.getRadius(), t.getY() - t.getRadius(), t.getRadius() * 2, t.getRadius() * 2);
-                    gc.strokeOval(t.getX() - t.getRadius(), t.getY() - t.getRadius(), t.getRadius() * 2, t.getRadius() * 2);
-                    gc.setFill(Color.BLACK);
-                    gc.fillText(String.valueOf(targetNumber), t.getX(), t.getY());
+                for (Target t : model.getTargets()) {
+                    t.draw(gc, targetNumber);
                     targetNumber++;
+                }
+                if (model.isWarpsVisible()) {
+                    for (WarpLocation w : model.getWarps()) {
+                        w.draw(gc);
+                    }
                 }
             }
             case DONE -> {
@@ -85,7 +78,8 @@ public class AppView extends StackPane implements AppModelListener {
 
     /**
      * Sets the AppView model
-     * @param newModel  - The model to set
+     *
+     * @param newModel - The model to set
      */
     public void setModel(AppModel newModel) {
         model = newModel;
@@ -101,6 +95,7 @@ public class AppView extends StackPane implements AppModelListener {
 
     /**
      * Sets the AppView controller
+     *
      * @param controller - Controller to set
      */
     public void setController(AppController controller) {
