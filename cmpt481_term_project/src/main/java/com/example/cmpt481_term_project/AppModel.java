@@ -7,7 +7,6 @@ COURSE: CMPT481 - Term Project
 package com.example.cmpt481_term_project;
 
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Line;
 
 import java.util.*;
 
@@ -35,6 +34,8 @@ public class AppModel {
 
     private Mechanism currentMechanism;
     Random random = new Random();
+    Timer fadeTimer;
+    TimerTask fadeTask;
 
 
     /**
@@ -57,6 +58,37 @@ public class AppModel {
         this.mouseY = 0;
 
         this.currentMode = AppMode.MECH_SELECT;
+
+        // Create timer and timertask for fading out mouse trail
+        fadeTimer = new Timer();
+
+    }
+
+    /**
+     * Method that starts a fade timer that repeats at a specified rate
+     */
+    public void startTrailFadeTimer() {
+        fadeTimer.cancel();
+        fadeTimer.purge();
+        fadeTimer = new Timer();
+
+        warpTrail.reset();
+        fadeTask = new TimerTask()
+        {
+            public void run()
+            {
+                // Reduce thickness and opacity until it disappears
+                if (warpTrail.getOpacity() > 0) {
+                    warpTrail.fadeStep();
+                    notifySubscribers();
+                } else {
+                    this.cancel();
+                }
+            }
+
+
+        };
+        fadeTimer.scheduleAtFixedRate(fadeTask, 0L, 50L);
     }
 
     public double getMouseX() {

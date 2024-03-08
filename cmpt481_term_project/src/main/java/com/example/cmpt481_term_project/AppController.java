@@ -86,6 +86,8 @@ public class AppController {
             // Because the mouse has warped/"moved" the mouseX and mouseY need to be updated
             model.setMouseX(warpX);
             model.setMouseY(warpY);
+            // Method to start fade timer
+            model.startTrailFadeTimer();
         }
         catch (Exception e){
             System.out.println("Could not move your mouse successfully");
