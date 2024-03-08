@@ -112,6 +112,7 @@ public class AppView extends StackPane implements AppModelListener {
         myCanvas.setOnMousePressed(controller::handlePress);
         myCanvas.setOnMouseReleased(controller::handleReleased);
         myCanvas.setOnKeyReleased(controller::handleKeyPressed);
+        myCanvas.setOnKeyReleased(controller::handleKeyReleased);
         myCanvas.setOnMouseMoved(controller::handleMouseMoved);
     }
 

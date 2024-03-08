@@ -7,6 +7,7 @@ COURSE: CMPT481 - Term Project
 package com.example.cmpt481_term_project;
 
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Line;
 
 import java.util.*;
 
@@ -26,11 +27,21 @@ public class AppModel {
     private double mouseY;
 
 
+
+    private double flickX, flickY;
+    private final double minFlickDistance = 30.0;
+    private boolean trackingFlick;
+
+
+
+
     public enum AppMode {MECH_SELECT, PRE_TRIAL, TRIAL, DONE}
 
     private AppMode currentMode;
 
     public enum Mechanism {GRID, USR_KEY, SYS_DEF, FLICK}
+
+
 
     private Mechanism currentMechanism;
     Random random = new Random();
@@ -62,6 +73,10 @@ public class AppModel {
         // Create timer and timertask for fading out mouse trail
         fadeTimer = new Timer();
 
+        // flick stuff
+        flickX = 0.0;
+        flickY = 0.0;
+        trackingFlick = false;
     }
 
     /**
@@ -89,6 +104,66 @@ public class AppModel {
 
         };
         fadeTimer.scheduleAtFixedRate(fadeTask, 0L, 50L);
+    }
+
+    public void saveFlickStartCoords() {
+        // Save mouse coords where hotkey was first pressed
+        this.flickX = this.mouseX;
+        this.flickY = this.mouseY;
+    }
+
+    public boolean reachedMinFlickDistance() {
+        // Calculate distance from flick start to current mouse position
+        return calculateDistance(flickX, flickY, mouseX, mouseY) <= minFlickDistance;
+    }
+
+    public void setFlickTracking(boolean b) {
+        this.trackingFlick = b;
+    }
+    public boolean trackingFlick() {
+        return trackingFlick;
+    }
+
+    public int getClosestFlickTarget(double x2, double y2, double x3, double y3) {
+        int closestWarp = -1;
+        double dist = Double.MAX_VALUE;
+        for (int i = 0; i < warps.size(); i++) {
+            if (calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY()) < dist) {
+                closestWarp = i + 1;
+                dist = calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY());
+            }
+        }
+        return closestWarp;
+    }
+
+    public static double calculateDistance(double x1, double y1, double x2, double y2) {
+        // distance = sqrt((x2 - x1)^2 + (y2 - y1)^2)
+        double deltaX = x2 - x1;
+        double deltaY = y2 - y1;
+        double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+
+        return distance;
+    }
+
+    public static double calculateDistanceToLine(double x1, double y1, double x2, double y2, double x0, double y0) {
+        // Using the formula for the distance from a point to a line
+        double numerator = Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1);
+        double denominator = Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
+
+        double distance = numerator / denominator;
+        return distance;
+    }
+
+    public double getFlickX() {
+        return flickX;
+    }
+
+    public double getFlickY() {
+        return flickY;
+    }
+
+    public Mechanism getCurrentMechanism() {
+        return currentMechanism;
     }
 
     public double getMouseX() {

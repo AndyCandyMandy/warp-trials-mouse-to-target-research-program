@@ -42,31 +42,42 @@ public class AppController {
                  if (keyEvent.getCode() == KeyCode.W) {
                     model.toggleWarps();
                 }
-                 // Display hotkey bar and warp location(s)
-                 if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
-                     if (!model.getWarps().isEmpty()) {
-                         // Show/hide warp location(s)
-                         model.toggleWarps();
-                         System.out.println(model.isWarpsVisible());
+                 switch (model.getCurrentMechanism()) {
+                     case USR_KEY -> {
+                         // Display hotkey bar and warp location(s)
+                         if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
+                             if (!model.getWarps().isEmpty()) {
+                                 // Show/hide warp location(s)
+                                 model.toggleWarps();
+                                 System.out.println(model.isWarpsVisible());
+                             }
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
+                             warpMouse(1);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
+                             warpMouse(2);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
+                             warpMouse(3);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
+                             warpMouse(4);
+                         }
+                     }
+                     case FLICK -> {
+                         if (keyEvent.getCode() == KeyCode.CONTROL) {
+                             model.setFlickTracking(true);
+                             model.saveFlickStartCoords();
+                         }
                      }
                  }
-                 else if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
-                     warpMouse(1);
-                 }
-                 else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
-                     warpMouse(2);
-                 }
-                 else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
-                     warpMouse(3);
-                 }
-                 else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
-                     warpMouse(4);
-                 }
-
             }
             case DONE -> model.nextMode();
         }
     }
+
+
 
     public void warpMouse(int locationNumber) {
         // Get the warp location in the list
@@ -148,6 +159,48 @@ public class AppController {
     public void handleMouseMoved(MouseEvent mouseEvent) {
         model.setMouseX(mouseEvent.getX());
         model.setMouseY(mouseEvent.getY());
+        switch (model.getCurrentMode()) {
+            case TRIAL -> {
+                switch (model.getCurrentMechanism()) {
+                    case FLICK -> {
+                        // check for minimum required distance from flick start position
+                        if (model.trackingFlick() && model.reachedMinFlickDistance()) {
+                            // Draw a line, then determine the best target
+                            double x2 = model.getFlickX();
+                            double y2 = model.getFlickY();
+                            double x1 = model.getMouseX();
+                            double y1 = model.getMouseY();
+                            double x3, y3;
+                            double len = Math.sqrt(Math.pow(x1 - x2, 2.0) + Math.pow(y1 - y2, 2.0));
+                            // Increase line length by 100 pixels
+                            x3 = x2 + (x2 - x1) / len * 1000;
+                            y3 = y2 + (y2 - y1) / len * 1000;
+                            // get the warp target closest to the new line
+                            int warp = -1;
+                            warp = model.getClosestFlickTarget(x2, y2, x3, y3);
+                            if (warp != -1) {
+                                warpMouse(warp);
+                            }
+                            model.setFlickTracking(false);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
+    public void handleKeyReleased(KeyEvent keyEvent) {
+        switch (model.getCurrentMode()) {
+            case TRIAL -> {
+                switch (model.getCurrentMechanism()) {
+                    case FLICK -> {
+                        if (keyEvent.getCode() == KeyCode.CONTROL) {
+                            model.setFlickTracking(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
