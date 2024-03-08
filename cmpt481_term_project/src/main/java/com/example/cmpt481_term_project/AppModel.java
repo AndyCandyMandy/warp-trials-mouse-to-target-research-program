@@ -17,8 +17,8 @@ public class AppModel {
     private List<WarpLocation> warps;
     private WarpTrail warpTrail;
     private boolean showWarps;
-    private int height;
-    private int width;
+    protected int height;
+    protected int width;
     private int numTargets;
     private int numTrials;
     private int targetRadius;

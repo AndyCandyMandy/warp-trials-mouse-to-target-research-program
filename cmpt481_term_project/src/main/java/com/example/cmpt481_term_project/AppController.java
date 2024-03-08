@@ -65,6 +65,34 @@ public class AppController {
                              warpMouse(4);
                          }
                      }
+                     case SYS_DEF -> {
+                         if (model.getWarps().size() != 4) {
+                             model.addWarp(new WarpLocation(model.width / 2, model.height / 4));
+                             model.addWarp(new WarpLocation(model.width / 2, model.height / 4 * 3));
+                             model.addWarp(new WarpLocation(model.width / 4, model.height / 2));
+                             model.addWarp(new WarpLocation(model.width / 4 * 3, model.height / 2));
+                         }
+                         // Display hotkey bar and warp location(s)
+                         if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
+                             if (!model.getWarps().isEmpty()) {
+                                 // Show/hide warp location(s)
+                                 model.toggleWarps();
+                                 System.out.println(model.isWarpsVisible());
+                             }
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
+                             warpMouse(1);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
+                             warpMouse(2);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
+                             warpMouse(3);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
+                             warpMouse(4);
+                         }
+                     }
                      case FLICK -> {
                          if (keyEvent.getCode() == KeyCode.CONTROL) {
                              model.setFlickTracking(true);
@@ -143,7 +171,7 @@ public class AppController {
             case TRIAL -> {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     model.recordClick(event.getX(), event.getY());
-                } else if (event.getButton() == MouseButton.SECONDARY) {
+                } else if (event.getButton() == MouseButton.SECONDARY && model.getCurrentMechanism() != AppModel.Mechanism.SYS_DEF) {
                     // The capacity for warp locations is locked 4 areas. This check verifies the current number
                     if (model.getWarps().size() != 4) {
                         model.addWarp(new WarpLocation(event.getX(), event.getY()));
