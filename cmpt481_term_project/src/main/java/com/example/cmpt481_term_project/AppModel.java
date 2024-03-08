@@ -45,7 +45,7 @@ public class AppModel {
         subscribers = new ArrayList<>();
         targets = new ArrayList<>();
         warps = new ArrayList<>();
-        warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0, 0.0);
+        warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0);
 
         this.width = w;
         this.height = h;
