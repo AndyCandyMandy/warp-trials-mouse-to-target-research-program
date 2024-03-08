@@ -26,7 +26,7 @@ public class AppView extends StackPane implements AppModelListener {
      * Creates the basic app view
      */
     public AppView() {
-        myCanvas = new Canvas(1500, 900);
+        myCanvas = new Canvas(model.width, model.height);
         gc = myCanvas.getGraphicsContext2D();
 
         this.getChildren().add(myCanvas);
