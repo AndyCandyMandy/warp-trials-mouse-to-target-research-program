@@ -17,14 +17,18 @@ public class AppModel {
     private List<WarpLocation> warps;
     private WarpTrail warpTrail;
     private boolean showWarps;
-    protected int height;
-    protected int width;
+    private int height;
+    private int width;
     private int numTargets;
     private int numTrials;
     private int targetRadius;
     private int currTarget;
     private double mouseX;
     private double mouseY;
+
+    // System-defined Warp Mechanism attributes
+    protected boolean sysDefTargetSelection = false;
+    protected List<Target> sysDefTargets;
 
 
     // Flick mechanism related attributes
@@ -57,6 +61,7 @@ public class AppModel {
         targets = new ArrayList<>();
         warps = new ArrayList<>();
         warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0);
+        sysDefTargets = new ArrayList<>();
 
         this.width = w;
         this.height = h;
@@ -362,7 +367,21 @@ public class AppModel {
     public void recordClick(double x, double y) {
         int oldTarget = currTarget;
         // Method for recording a click during trial mode
-        if (hitTarget((int) x, (int) y)) {
+        if (sysDefTargetSelection) {
+            for (Target target : targets) {
+                if (target.contains(x, y)) {
+                    sysDefTargets.add(targets.get(this.currTarget));
+                    System.out.println("Clicked target");
+                    if (sysDefTargets.size() > 19) {
+                        sysDefTargetSelection = false;
+                        this.currTarget = random.nextInt(numTargets);
+                        targets.get(currTarget).select();
+                        notifySubscribers();
+                    }
+                }
+            }
+        }
+        else if (hitTarget((int) x, (int) y)) {
             // Deselect old target
             targets.get(currTarget).deselect();
             // Select new target
@@ -409,6 +428,9 @@ public class AppModel {
             }
             case PRE_TRIAL -> {
                 this.currentMode = AppMode.TRIAL;
+                if (getCurrentMechanism() == Mechanism.SYS_DEF) {
+                    sysDefTargetSelection = true;
+                }
                 generateRandomTargets();
             }
             case TRIAL -> {
@@ -450,10 +472,12 @@ public class AppModel {
             }
         }
 
-        this.currTarget = random.nextInt(numTargets);
-        targets.get(currTarget).select();
+        if (!sysDefTargetSelection) {
+            this.currTarget = random.nextInt(numTargets);
+            targets.get(currTarget).select();
 
-        notifySubscribers();
+            notifySubscribers();
+        }
     }
 
 }

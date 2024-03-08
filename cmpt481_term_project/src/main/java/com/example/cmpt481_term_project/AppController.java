@@ -67,10 +67,10 @@ public class AppController {
                      }
                      case SYS_DEF -> {
                          if (model.getWarps().size() != 4) {
-                             model.addWarp(new WarpLocation(model.width / 2, model.height / 4));
-                             model.addWarp(new WarpLocation(model.width / 2, model.height / 4 * 3));
-                             model.addWarp(new WarpLocation(model.width / 4, model.height / 2));
-                             model.addWarp(new WarpLocation(model.width / 4 * 3, model.height / 2));
+                             model.addWarp(new WarpLocation(1500 / 2, 900 / 4));
+                             model.addWarp(new WarpLocation(1500 / 2, 900 / 4 * 3));
+                             model.addWarp(new WarpLocation(1500 / 4, 900 / 2));
+                             model.addWarp(new WarpLocation(1500 / 4 * 3, 900 / 2));
                          }
                          // Display hotkey bar and warp location(s)
                          if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
