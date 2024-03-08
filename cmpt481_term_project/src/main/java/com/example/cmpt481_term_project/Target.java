@@ -32,7 +32,7 @@ public class Target {
      * @param gc        - GraphicsContext to use to draw
      * @param targetNum - Number drawn inside target
      */
-    public void draw(GraphicsContext gc, int targetNum) {
+    public void drawTargets(GraphicsContext gc, int targetNum) {
         if (selected) {
             gc.setFill(Color.TOMATO);
         } else {

@@ -36,8 +36,7 @@ public class MainUI extends StackPane {
         appView.modelChanged();
 
         // MainUI has keyboard focus - pass key events to controller
-        this.setOnKeyPressed(controller::handleKeyRelease);
-
+        this.setOnKeyPressed(controller::handleKeyPressed);
     }
 
 }

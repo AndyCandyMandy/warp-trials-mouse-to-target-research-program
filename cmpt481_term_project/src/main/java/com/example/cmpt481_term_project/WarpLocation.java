@@ -6,8 +6,12 @@ COURSE: CMPT481 - Term Project
 */
 package com.example.cmpt481_term_project;
 
+import javafx.animation.FadeTransition;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class WarpLocation {
     private double x, y, r;
@@ -15,13 +19,13 @@ public class WarpLocation {
     /**
      * Creates new warp location
      *
-     * @param nx - x coordinate
-     * @param ny - y coordinate
+     * @param nx         - x coordinate
+     * @param ny         - y coordinate
      */
     public WarpLocation(double nx, double ny) {
-        x = nx;
-        y = ny;
-        r = 25;
+        this.x = nx;
+        this.y = ny;
+        this.r = 25;
     }
 
     /**
@@ -29,9 +33,11 @@ public class WarpLocation {
      *
      * @param gc - GraphicsContext to use to draw
      */
-    public void draw(GraphicsContext gc) {
-        gc.setStroke(Color.TOMATO);
-        gc.strokeOval(x - r, y - r, r * 2, r * 2);
+    public void drawWarpLocations(GraphicsContext gc, int warpNumber) {
+        gc.setFill(Color.rgb(0, 255, 50, 0.4));
+        gc.fillOval(x - r, y - r, r * 2, r * 2);
+        gc.setFill(Color.BLACK);
+        gc.fillText(String.valueOf(warpNumber), x, y);
     }
 
     /**

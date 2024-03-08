@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.robot.Robot;
 
 public class AppController {
     AppModel model;
@@ -19,7 +20,7 @@ public class AppController {
      *
      * @param keyEvent - The key event
      */
-    public void handleKeyRelease(KeyEvent keyEvent) {
+    public void handleKeyPressed(KeyEvent keyEvent) {
         switch (model.getCurrentMode()) {
             case MECH_SELECT -> {
                 if (keyEvent.getCode() == KeyCode.DIGIT1 || keyEvent.getCode() == KeyCode.DIGIT2 ||
@@ -37,10 +38,45 @@ public class AppController {
                  if (keyEvent.getCode() == KeyCode.W) {
                     model.toggleWarps();
                 }
+                 // Display hotkey bar and warp location(s)
+                 if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
+                     if (!model.getWarps().isEmpty()) {
+                         // Show/hide warp location(s)
+                         model.toggleWarps();
+                         System.out.println(model.isWarpsVisible());
+                     }
+                 }
+                 else if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
+                     moveMouse(1);
+                 }
+                 else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
+                     moveMouse(2);
+                 }
+                 else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
+                     moveMouse(3);
+                 }
+                 else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
+                     moveMouse(4);
+                 }
+
             }
-            case DONE -> {
-                model.nextMode();
-            }
+            case DONE -> model.nextMode();
+        }
+    }
+
+    public void moveMouse(int locationNumber) {
+
+        // Get the warp location in the list
+        double warpX = model.getWarps().get(locationNumber - 1).getX();
+        double warpY = model.getWarps().get(locationNumber - 1).getY();
+
+        // Use Robot to move mouse to location
+        try {
+            Robot robot = new Robot();
+            robot.mouseMove(warpX, warpY);
+        }
+        catch (Exception e){
+            System.out.println("Could not move your mouse successfully");
         }
     }
 
@@ -80,7 +116,13 @@ public class AppController {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     model.recordClick(event.getX(), event.getY());
                 } else if (event.getButton() == MouseButton.SECONDARY) {
-                    model.addWarp(new WarpLocation(event.getX(), event.getY()));
+                    // The capacity for warp locations is locked 4 areas. This check verifies the current number
+                    if (model.getWarps().size() != 4) {
+                        model.addWarp(new WarpLocation(event.getX(), event.getY()));
+                    }
+                    else {
+                        System.out.println("You have reached your warp capacity");
+                    }
                 }
             }
         }

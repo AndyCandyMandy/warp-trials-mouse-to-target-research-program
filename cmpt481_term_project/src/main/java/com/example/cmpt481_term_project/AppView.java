@@ -9,7 +9,6 @@ package com.example.cmpt481_term_project;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -57,12 +56,15 @@ public class AppView extends StackPane implements AppModelListener {
                 // draw targets
                 int targetNumber = 1;
                 for (Target t : model.getTargets()) {
-                    t.draw(gc, targetNumber);
+                    t.drawTargets(gc, targetNumber);
                     targetNumber++;
                 }
                 if (model.isWarpsVisible()) {
+                    // draw warp locations
+                    int warpNumber = 1;
                     for (WarpLocation w : model.getWarps()) {
-                        w.draw(gc);
+                        w.drawWarpLocations(gc, warpNumber);
+                        warpNumber++;
                     }
                 }
             }
@@ -102,7 +104,7 @@ public class AppView extends StackPane implements AppModelListener {
         this.controller = controller;
         myCanvas.setOnMousePressed(controller::handlePress);
         myCanvas.setOnMouseReleased(controller::handleReleased);
-        myCanvas.setOnKeyReleased(controller::handleKeyRelease);
+        myCanvas.setOnKeyReleased(controller::handleKeyPressed);
     }
 
 }
