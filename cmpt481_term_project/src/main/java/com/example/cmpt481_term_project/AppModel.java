@@ -27,7 +27,7 @@ public class AppModel {
     private double mouseY;
 
 
-
+    // Flick mechanism related attributes
     private double flickX, flickY;
     private final double minFlickDistance = 30.0;
     private boolean trackingFlick;
@@ -73,7 +73,7 @@ public class AppModel {
         // Create timer and timertask for fading out mouse trail
         fadeTimer = new Timer();
 
-        // flick stuff
+        // Flick mechanism related stuff
         flickX = 0.0;
         flickY = 0.0;
         trackingFlick = false;
@@ -106,37 +106,71 @@ public class AppModel {
         fadeTimer.scheduleAtFixedRate(fadeTask, 0L, 50L);
     }
 
+    /**
+     * Saves the flick starting coordinates for drawing the flick line
+     */
     public void saveFlickStartCoords() {
         // Save mouse coords where hotkey was first pressed
         this.flickX = this.mouseX;
         this.flickY = this.mouseY;
     }
 
+    /**
+     * Checks and returns if the min distance has been reached for creating the flick line
+     * @return - True if you reached the min distance, false otherwise
+     */
     public boolean reachedMinFlickDistance() {
         // Calculate distance from flick start to current mouse position
-        return calculateDistance(flickX, flickY, mouseX, mouseY) <= minFlickDistance;
+        return calculateDistance(flickX, flickY, mouseX, mouseY) >= minFlickDistance;
     }
 
+    /**
+     * Sets the flag indicating that the flick is being tracked
+     * @param b - Flag that indicates that the flick is being tracked
+     */
     public void setFlickTracking(boolean b) {
         this.trackingFlick = b;
     }
+
+    /**
+     * Returns the status of the flick tracking flag
+     * @return
+     */
     public boolean trackingFlick() {
         return trackingFlick;
     }
 
+    /**
+     * Method for getting and returning the flick target based on the longer flick line
+     * @param x2 - the start position x coord
+     * @param y2 - the start position y coord
+     * @param x3 - the end position x coord
+     * @param y3 - the end position y coord
+     * @return
+     */
     public int getClosestFlickTarget(double x2, double y2, double x3, double y3) {
         int closestWarp = -1;
         double dist = Double.MAX_VALUE;
         for (int i = 0; i < warps.size(); i++) {
-            if (calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY()) < dist) {
+            if (calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY()) < dist &&
+                    calculateAngle(x3, y3, x2, y2, warps.get(i).getX(), warps.get(i).getY()) < 45.0) {
                 closestWarp = i + 1;
                 dist = calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY());
             }
         }
+        //System.out.println("Angle: " + calculateAngle(x3, y3, x2, y2, warps.get(closestWarp - 1).getX(), warps.get(closestWarp - 1).getY()));
         return closestWarp;
     }
 
-    public static double calculateDistance(double x1, double y1, double x2, double y2) {
+    /**
+     * Method that calculates the distance between two points
+     * @param x1 - 1st point, x coord
+     * @param y1 - 1st point, y coord
+     * @param x2 - 2nd point, x coord
+     * @param y2 - 2nd point, y coord
+     * @return - Returns the distance between points
+     */
+    private static double calculateDistance(double x1, double y1, double x2, double y2) {
         // distance = sqrt((x2 - x1)^2 + (y2 - y1)^2)
         double deltaX = x2 - x1;
         double deltaY = y2 - y1;
@@ -145,6 +179,16 @@ public class AppModel {
         return distance;
     }
 
+    /**
+     * Calculates the distance from a point to a line
+     * @param x1 - 1st point of line, x coord
+     * @param y1 - 1st point of line, y coord
+     * @param x2 - 2nd point of line, x coord
+     * @param y2 - 2nd point of line, y coord
+     * @param x0 - Point x coord
+     * @param y0 - Point x coord
+     * @return - Returns the distance from the point to the line
+     */
     public static double calculateDistanceToLine(double x1, double y1, double x2, double y2, double x0, double y0) {
         // Using the formula for the distance from a point to a line
         double numerator = Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1);
@@ -154,10 +198,43 @@ public class AppModel {
         return distance;
     }
 
+    /**
+     * Calculates the angle formed by three points where one point is shared between the two lines
+     * @param x1 - 1st point, x coord
+     * @param y1 - 1st point, y coord
+     * @param x2 - 2nd point, x coord - Shared point
+     * @param y2 - 2nd point, y coord - Shared point
+     * @param x3 - 3rd point, x coord
+     * @param y3 - 3rd point, y coord
+     * @return - Returns the angle formed by the three points
+     */
+    public static double calculateAngle(double x1, double y1, double x2, double y2, double x3, double y3) {
+        // Create vectors from points
+        double vec1X = x1 - x2;
+        double vec1Y = y1 - y2;
+        double vec2X = x3 - x2;
+        double vec2Y = y3 - y2;
+        double dotProduct = (vec1X * vec2X) + (vec1Y * vec2Y);
+        // Calculate the magnitude of the vectors
+        double mag1 = Math.sqrt(Math.pow(vec1X, 2) + Math.pow(vec1Y, 2));
+        double mag2 = Math.sqrt(Math.pow(vec2X, 2) + Math.pow(vec2Y, 2));
+        // Get cosine
+        double cos = dotProduct / (mag1 * mag2);
+        // return angle in degrees - 180 to correct
+        return Math.abs(Math.toDegrees(Math.acos(cos)) - 180);
+    }
+
+    /**
+     * Method for getting the saved flick x coord
+     * @return - Returns the flick x coord
+     */
     public double getFlickX() {
         return flickX;
     }
-
+    /**
+     * Method for getting the saved flick y coord
+     * @return - Returns the flick y coord
+     */
     public double getFlickY() {
         return flickY;
     }
