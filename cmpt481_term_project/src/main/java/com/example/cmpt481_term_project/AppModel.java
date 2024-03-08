@@ -7,6 +7,7 @@ COURSE: CMPT481 - Term Project
 package com.example.cmpt481_term_project;
 
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Line;
 
 import java.util.*;
 
@@ -14,6 +15,7 @@ public class AppModel {
     private List<AppModelListener> subscribers;
     private List<Target> targets;
     private List<WarpLocation> warps;
+    private WarpTrail warpTrail;
     private boolean showWarps;
     private int height;
     private int width;
@@ -21,8 +23,8 @@ public class AppModel {
     private int numTrials;
     private int targetRadius;
     private int currTarget;
-
-
+    private double mouseX;
+    private double mouseY;
 
 
     public enum AppMode {MECH_SELECT, PRE_TRIAL, TRIAL, DONE}
@@ -42,6 +44,7 @@ public class AppModel {
         subscribers = new ArrayList<>();
         targets = new ArrayList<>();
         warps = new ArrayList<>();
+        warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0, 0.0);
 
         this.width = w;
         this.height = h;
@@ -50,7 +53,35 @@ public class AppModel {
         this.numTrials = 10;
         this.showWarps = false;
 
+        this.mouseX = 0;
+        this.mouseY = 0;
+
         this.currentMode = AppMode.MECH_SELECT;
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public void setMouseX(double mouseX) {
+        this.mouseX = mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
+    }
+
+    public void setMouseY(double mouseY) {
+        this.mouseY = mouseY;
+    }
+
+    public WarpTrail getWarpTrail() {
+        return warpTrail;
+    }
+
+    public void setWarpTrail(double endPointX, double endPointY, double mouseX, double mouseY) {
+        warpTrail.setCoords(endPointX, endPointY, mouseX, mouseY);
+        notifySubscribers();
     }
 
     /**

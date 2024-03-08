@@ -6,6 +6,7 @@ COURSE: CMPT481 - Term Project
 */
 package com.example.cmpt481_term_project;
 
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -13,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+
 
 public class AppView extends StackPane implements AppModelListener {
     GraphicsContext gc;
@@ -67,6 +69,8 @@ public class AppView extends StackPane implements AppModelListener {
                         warpNumber++;
                     }
                 }
+                // Draw warp trail
+                model.getWarpTrail().draw(gc);
             }
             case DONE -> {
                 // clear canvas
@@ -74,7 +78,6 @@ public class AppView extends StackPane implements AppModelListener {
                 gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
                 gc.fillText("Trial Complete, press any key to exit.", myCanvas.getWidth() / 2, 50);
             }
-
         }
     }
 
@@ -102,9 +105,14 @@ public class AppView extends StackPane implements AppModelListener {
      */
     public void setController(AppController controller) {
         this.controller = controller;
+
+        // Canvas is set from controller to help with mouse warping
+        this.controller.setCanvas(myCanvas);
+
         myCanvas.setOnMousePressed(controller::handlePress);
         myCanvas.setOnMouseReleased(controller::handleReleased);
         myCanvas.setOnKeyReleased(controller::handleKeyPressed);
+        myCanvas.setOnMouseMoved(controller::handleMouseMoved);
     }
 
 }

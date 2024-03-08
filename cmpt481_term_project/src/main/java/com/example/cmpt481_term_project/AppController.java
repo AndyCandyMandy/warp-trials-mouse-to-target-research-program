@@ -6,6 +6,8 @@ COURSE: CMPT481 - Term Project
 */
 package com.example.cmpt481_term_project;
 
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -14,6 +16,8 @@ import javafx.scene.robot.Robot;
 
 public class AppController {
     AppModel model;
+
+    Canvas canvas;
 
     /**
      * Handles a key press
@@ -47,16 +51,16 @@ public class AppController {
                      }
                  }
                  else if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
-                     moveMouse(1);
+                     warpMouse(1);
                  }
                  else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
-                     moveMouse(2);
+                     warpMouse(2);
                  }
                  else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
-                     moveMouse(3);
+                     warpMouse(3);
                  }
                  else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
-                     moveMouse(4);
+                     warpMouse(4);
                  }
 
             }
@@ -64,16 +68,24 @@ public class AppController {
         }
     }
 
-    public void moveMouse(int locationNumber) {
-
+    public void warpMouse(int locationNumber) {
         // Get the warp location in the list
         double warpX = model.getWarps().get(locationNumber - 1).getX();
         double warpY = model.getWarps().get(locationNumber - 1).getY();
 
+        // Convert canvas coords to screen coords for accurate mouse warping
+        Point2D screenCoords = canvas.localToScreen(warpX, warpY);
+
         // Use Robot to move mouse to location
         try {
             Robot robot = new Robot();
-            robot.mouseMove(warpX, warpY);
+            robot.mouseMove(screenCoords.getX(), screenCoords.getY());
+            model.setWarpTrail(warpX, warpY, model.getMouseX(), model.getMouseY());
+
+            // TODO - Bug, double warping causes line to be misaligned
+            // Because the mouse has warped/"moved" the mouseX and mouseY need to be updated
+            model.setMouseX(warpX);
+            model.setMouseY(warpY);
         }
         catch (Exception e){
             System.out.println("Could not move your mouse successfully");
@@ -93,6 +105,9 @@ public class AppController {
      */
     public void setModel(AppModel newModel) {
         model = newModel;
+    }
+    public void setCanvas(Canvas canvas) {
+        this.canvas = canvas;
     }
 
 
@@ -126,7 +141,11 @@ public class AppController {
                 }
             }
         }
+    }
 
+    public void handleMouseMoved(MouseEvent mouseEvent) {
+        model.setMouseX(mouseEvent.getX());
+        model.setMouseY(mouseEvent.getY());
     }
 
 }
