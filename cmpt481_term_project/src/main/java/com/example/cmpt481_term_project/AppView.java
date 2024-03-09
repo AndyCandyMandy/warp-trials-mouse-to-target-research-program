@@ -10,6 +10,7 @@ package com.example.cmpt481_term_project;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -68,7 +69,14 @@ public class AppView extends StackPane implements AppModelListener {
                     t.drawTargets(gc, targetNumber);
                     targetNumber++;
                 }
+
+
                 if (model.isWarpsVisible()) {
+
+                    // draw grid if in "GRID" mechanism state
+                    if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
+                        drawGrid((int) getHeight()/100,(int) getWidth()/100);
+                    }
                     // draw warp locations
                     int warpNumber = 1;
                     for (WarpLocation w : model.getWarps()) {
@@ -84,6 +92,28 @@ public class AppView extends StackPane implements AppModelListener {
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
                 gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
                 gc.fillText("Trial Complete, press any key to exit.", myCanvas.getWidth() / 2, 50);
+            }
+        }
+    }
+
+    /**
+     * Creates a visible grid based on the inputted parameters and the general size of the canvas
+     *
+     * @param y - The amount of squares on the Y-axis of the grid
+     * @param x - The amount of squares on the X-axis of the grid
+     */
+    public void drawGrid(int y, int x) {
+        double xPos = getHeight()/ y;
+        double yPos = getWidth()/x;
+        gc.setFill(Color.rgb(0, 255, 50, 0.5));
+        while (xPos < getHeight() || yPos < getWidth()) {
+            if (xPos < getHeight()) {
+                gc.fillRect(0, xPos, getWidth(), 5);
+                xPos += getHeight()/ y;
+            }
+            if (yPos < getWidth()) {
+                gc.fillRect(yPos, 0, 5, getHeight());
+                yPos += getWidth()/x;
             }
         }
     }

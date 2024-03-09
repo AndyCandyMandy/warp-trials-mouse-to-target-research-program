@@ -15,6 +15,7 @@ public class AppModel {
     private List<AppModelListener> subscribers;
     private List<Target> targets;
     private List<WarpLocation> warps;
+    private List<GridPointer> gridPoints;
     private WarpTrail warpTrail;
     private boolean showWarps;
     private int height;
@@ -64,6 +65,8 @@ public class AppModel {
         warps = new ArrayList<>();
         warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0);
         sysDefClickPositions = new ArrayList<>();
+        gridPoints = new ArrayList<>();
+        warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0, 0.0);
 
         this.width = w;
         this.height = h;
@@ -74,6 +77,8 @@ public class AppModel {
 
         this.mouseX = 0;
         this.mouseY = 0;
+
+        setUpGridPoints((double) this.width / 100, (double) this.height / 100);
 
         this.currentMode = AppMode.MECH_SELECT;
 
@@ -319,6 +324,33 @@ public class AppModel {
         return showWarps;
     }
 
+    public List<GridPointer> getGridList() {
+        return this.gridPoints;
+    }
+
+    public void setUpGridPoints(double x, double y) {
+        double yPos = this.width/ x;
+        double xPos = this.height/ y;
+        for (int i = 1; i <= x - 1; i++) {
+            for (int j = 1; j <= y - 1; j++) {
+                this.gridPoints.add(new GridPointer(xPos, yPos));
+                yPos += this.width / x;
+            }
+            yPos = this.width / x;
+            xPos += this.height / y;
+        }
+    }
+
+    public GridPointer findGridPoint(double x, double y) {
+        for (GridPointer point : this.gridPoints) {
+            point.mouseInRadius(x, y);
+            if (point.getInRadius()) {
+                return point;
+            }
+        }
+        return null;
+    }
+
     /**
      * Adds a subscriber to the model
      *
@@ -418,6 +450,10 @@ public class AppModel {
                 this.currentMechanism = Mechanism.FLICK;
             }
         }
+    }
+
+    public Mechanism getCurrentMechanism() {
+        return this.currentMechanism;
     }
 
     /**
