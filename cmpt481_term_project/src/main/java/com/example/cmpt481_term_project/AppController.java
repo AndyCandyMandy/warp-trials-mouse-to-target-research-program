@@ -43,21 +43,8 @@ public class AppController {
                     model.toggleWarps();
                 }
                  switch (model.getCurrentMechanism()) {
-                     case GRID -> {
-                         if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
-                             warpMouse(1);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
-                             warpMouse(2);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
-                             warpMouse(3);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
-                             warpMouse(4);
-                         }
-                     }
-                    case USR_KEY -> {
+                     case GRID:
+                     case USR_KEY: {
                          // Display hotkey bar and warp location(s)
                          if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
                              if (!model.getWarps().isEmpty()) {
@@ -66,20 +53,11 @@ public class AppController {
                                  System.out.println(model.isWarpsVisible());
                              }
                          }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
-                             warpMouse(1);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
-                             warpMouse(2);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
-                             warpMouse(3);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
-                             warpMouse(4);
+                         else  {
+                             warp(keyEvent.getCode());
                          }
                      }
-                     case SYS_DEF -> {
+                     case SYS_DEF: {
                          if (model.getWarps().size() != 4 && !model.sysDefTargetSelection) {
                              for (Point2D warpLocation : model.sysDefWarpLocations) {
                                  model.addWarp(new WarpLocation(warpLocation.getX(), warpLocation.getY()));
@@ -93,20 +71,11 @@ public class AppController {
                                  System.out.println(model.isWarpsVisible());
                              }
                          }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
-                             warpMouse(1);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
-                             warpMouse(2);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
-                             warpMouse(3);
-                         }
-                         else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
-                             warpMouse(4);
+                         else {
+                             warp(keyEvent.getCode());
                          }
                      }
-                     case FLICK -> {
+                     case FLICK: {
                          if (keyEvent.getCode() == KeyCode.CONTROL) {
                              model.setFlickTracking(true);
                              model.saveFlickStartCoords();
@@ -117,6 +86,25 @@ public class AppController {
             case DONE -> model.nextMode();
         }
     }
+
+    private void warp(KeyCode k){
+        if (k == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
+            warpMouse(1);
+        }
+        else if (k == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
+            warpMouse(2);
+        }
+        else if (k == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
+            warpMouse(3);
+        }
+        else if (k == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
+            warpMouse(4);
+        }
+    }
+
+
+
+
 
 
 
