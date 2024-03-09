@@ -133,7 +133,26 @@ public class AppController {
                 } else if (event.getButton() == MouseButton.SECONDARY) {
                     // The capacity for warp locations is locked 4 areas. This check verifies the current number
                     if (model.getWarps().size() != 4) {
-                        model.addWarp(new WarpLocation(event.getX(), event.getY()));
+                        // Ensures that the user can't place warps while the grids aren't visible
+                        if (model.getCurrentMechanism() == AppModel.Mechanism.GRID && model.isWarpsVisible()) {
+
+                            for (GridPointer point : model.getGridPoints()) {
+                                point.setMouseInRadius(event.getX(),event.getY());
+                                if (point.getInRadius() && model.getCurrentMechanism() == AppModel.Mechanism.GRID && model.isWarpsVisible()) {
+                                    model.addWarp(new WarpLocation(point.getX(), point.getY()));
+                                }
+                            }
+
+                        }
+                        else if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
+                            model.addWarp(new WarpLocation(event.getX(), event.getY()));
+                        }
+                        else if (model.getCurrentMechanism() == AppModel.Mechanism.USR_KEY) {
+                            model.addWarp(new WarpLocation(event.getX(), event.getY()));
+                        }
+                        else if (model.getCurrentMechanism() == AppModel.Mechanism.FLICK) {
+                            model.addWarp(new WarpLocation(event.getX(), event.getY()));
+                        }
                     }
                     else {
                         System.out.println("You have reached your warp capacity");

@@ -15,6 +15,8 @@ public class AppModel {
     private List<AppModelListener> subscribers;
     private List<Target> targets;
     private List<WarpLocation> warps;
+
+    private List<GridPointer> gridPoints;
     private WarpTrail warpTrail;
     private boolean showWarps;
     private int height;
@@ -44,6 +46,7 @@ public class AppModel {
         subscribers = new ArrayList<>();
         targets = new ArrayList<>();
         warps = new ArrayList<>();
+        gridPoints = new ArrayList<>();
         warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0, 0.0);
 
         this.width = w;
@@ -126,6 +129,14 @@ public class AppModel {
      */
     public boolean isWarpsVisible() {
         return showWarps;
+    }
+
+    public void addGridPoint(GridPointer point) {
+        this.gridPoints.add(point);
+    }
+
+    public List<GridPointer> getGridPoints() {
+        return this.gridPoints;
     }
 
     /**
@@ -213,6 +224,10 @@ public class AppModel {
                 this.currentMechanism = Mechanism.FLICK;
             }
         }
+    }
+
+    public Mechanism getCurrentMechanism() {
+        return this.currentMechanism;
     }
 
     /**
