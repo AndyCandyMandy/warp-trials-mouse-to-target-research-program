@@ -469,7 +469,8 @@ public class AppModel {
                 this.currentMode = AppMode.DONE;
             }
             case DONE -> {
-                System.exit(0);
+                this.currentMode = AppMode.MECH_SELECT;
+                warps = new ArrayList<>();
             }
         }
         notifySubscribers();
