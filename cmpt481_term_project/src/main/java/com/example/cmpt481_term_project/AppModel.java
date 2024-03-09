@@ -398,7 +398,6 @@ public class AppModel {
         // Method for adding user click positions
         if (sysDefTargetSelection) {
             sysDefClickPositions.add(new Point2D(x, y));
-            System.out.println("Clicked target");
             // If n number of coordinates has been clicked...
             if (sysDefClickPositions.size() > 19) {
                 sysDefTargetSelection = false;
