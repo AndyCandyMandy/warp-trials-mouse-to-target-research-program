@@ -7,7 +7,6 @@ COURSE: CMPT481 - Term Project
 package com.example.cmpt481_term_project;
 
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Line;
 
 import java.util.*;
 
@@ -135,8 +134,14 @@ public class AppModel {
         this.gridPoints.add(point);
     }
 
-    public List<GridPointer> getGridPoints() {
-        return this.gridPoints;
+    public GridPointer findGridPoint(double x, double y) {
+        for (GridPointer point : this.gridPoints) {
+            point.mouseInRadius(x, y);
+            if (point.getInRadius()) {
+                return point;
+            }
+        }
+        return null;
     }
 
     /**

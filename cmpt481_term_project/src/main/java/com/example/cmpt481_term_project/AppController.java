@@ -135,14 +135,10 @@ public class AppController {
                     if (model.getWarps().size() != 4) {
                         // Ensures that the user can't place warps while the grids aren't visible
                         if (model.getCurrentMechanism() == AppModel.Mechanism.GRID && model.isWarpsVisible()) {
-
-                            for (GridPointer point : model.getGridPoints()) {
-                                point.setMouseInRadius(event.getX(),event.getY());
-                                if (point.getInRadius() && model.getCurrentMechanism() == AppModel.Mechanism.GRID && model.isWarpsVisible()) {
-                                    model.addWarp(new WarpLocation(point.getX(), point.getY()));
-                                }
+                            GridPointer point = model.findGridPoint(event.getX(), event.getY());
+                            if (point != null) {
+                                model.addWarp(new WarpLocation(point.getX(), point.getY()));
                             }
-
                         }
                         else if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
                             model.addWarp(new WarpLocation(event.getX(), event.getY()));

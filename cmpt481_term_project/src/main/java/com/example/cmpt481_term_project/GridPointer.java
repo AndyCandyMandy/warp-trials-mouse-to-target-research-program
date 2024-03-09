@@ -7,7 +7,7 @@ public class GridPointer {
     public boolean inRadius = false;
 
     /**
-     * Creates a radius where the mouse will snap to a certain location
+     * Creates clickable portion on the grid
      *
      * @param x         - x coordinate
      * @param y         - y coordinate
@@ -17,9 +17,14 @@ public class GridPointer {
         this.y = y;
     }
 
-    public void setMouseInRadius(double mouseX, double mouseY) {
-        this.inRadius = !this.inRadius && mouseX > this.x - (this.snapRadius / 2) && mouseX < this.x + (this.snapRadius / 2) &&
-                mouseY > this.y - (this.snapRadius / 2) && mouseY < this.y + (this.snapRadius / 2);
+    public void mouseInRadius(double mouseX, double mouseY) {
+        if (mouseX > this.x - (this.snapRadius / 2) && mouseX < this.x + (this.snapRadius / 2) &&
+                mouseY > this.y - (this.snapRadius / 2) && mouseY < this.y + (this.snapRadius / 2)) {
+            this.inRadius = true;
+        }
+        else {
+            this.inRadius = false;
+        }
     }
 
     public boolean getInRadius() {

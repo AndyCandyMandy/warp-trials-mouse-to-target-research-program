@@ -9,7 +9,6 @@ package com.example.cmpt481_term_project;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -69,7 +68,7 @@ public class AppView extends StackPane implements AppModelListener {
 
                     // draw grid if in "GRID" mechanism state
                     if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
-                        drawGrid(9,15);
+                        drawGrid((int) getHeight()/100,(int) getWidth()/100);
                     }
                     // draw warp locations
                     int warpNumber = 1;
@@ -93,32 +92,32 @@ public class AppView extends StackPane implements AppModelListener {
     /**
      * Creates a visible grid based on the inputted parameters and the general size of the canvas
      *
-     * @param x - The amount of squares on the X-axis of the grid
      * @param y - The amount of squares on the Y-axis of the grid
+     * @param x - The amount of squares on the X-axis of the grid
      */
-    public void drawGrid(int x, int y) {
-        double xPos = getHeight()/x;
-        double yPos = getWidth()/y;
+    public void drawGrid(int y, int x) {
+        double xPos = getHeight()/ y;
+        double yPos = getWidth()/x;
         gc.setFill(Color.rgb(0, 255, 50, 0.5));
         while (xPos < getHeight() || yPos < getWidth()) {
             if (xPos < getHeight()) {
                 gc.fillRect(0, xPos, getWidth(), 5);
-                xPos += getHeight()/x;
+                xPos += getHeight()/ y;
             }
             if (yPos < getWidth()) {
                 gc.fillRect(yPos, 0, 5, getHeight());
-                yPos += getWidth()/y;
+                yPos += getWidth()/x;
             }
         }
-        xPos = getHeight()/x;
-        yPos = getWidth()/y;
-        for (int i = 1; i <= y - 1; i++) {
-            for (int j = 1; j <= x - 1; j++) {
+        xPos = getHeight()/ y;
+        yPos = getWidth()/x;
+        for (int i = 1; i <= x - 1; i++) {
+            for (int j = 1; j <= y - 1; j++) {
                 model.addGridPoint(new GridPointer(xPos, yPos));
-                yPos += getWidth()/y;
+                yPos += getWidth()/x;
             }
-            yPos = getWidth()/y;
-            xPos += getHeight()/x;
+            yPos = getWidth()/x;
+            xPos += getHeight()/ y;
         }
 
     }
