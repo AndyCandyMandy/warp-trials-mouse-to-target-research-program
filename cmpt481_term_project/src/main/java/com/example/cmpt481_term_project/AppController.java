@@ -56,6 +56,7 @@ public class AppController {
                          else  {
                              warp(keyEvent.getCode());
                          }
+                         break;
                      }
                      case SYS_DEF: {
                          if (model.getWarps().size() != 4 && !model.sysDefTargetSelection) {
@@ -74,12 +75,14 @@ public class AppController {
                          else {
                              warp(keyEvent.getCode());
                          }
+                         break;
                      }
                      case FLICK: {
                          if (keyEvent.getCode() == KeyCode.CONTROL) {
                              model.setFlickTracking(true);
                              model.saveFlickStartCoords();
                          }
+                         break;
                      }
                  }
             }
