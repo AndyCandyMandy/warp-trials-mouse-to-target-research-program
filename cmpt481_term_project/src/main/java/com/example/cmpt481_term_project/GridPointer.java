@@ -1,5 +1,7 @@
 package com.example.cmpt481_term_project;
 
+import javafx.scene.canvas.GraphicsContext;
+
 public class GridPointer {
 
     int snapRadius = 75;
@@ -31,7 +33,7 @@ public class GridPointer {
         return this.inRadius;
     }
 
-    public double getSnapRadius() {
+    public double getRadius() {
         return this.snapRadius;
     }
 

@@ -109,17 +109,6 @@ public class AppView extends StackPane implements AppModelListener {
                 yPos += getWidth()/x;
             }
         }
-        xPos = getHeight()/ y;
-        yPos = getWidth()/x;
-        for (int i = 1; i <= x - 1; i++) {
-            for (int j = 1; j <= y - 1; j++) {
-                model.addGridPoint(new GridPointer(xPos, yPos));
-                yPos += getWidth()/x;
-            }
-            yPos = getWidth()/x;
-            xPos += getHeight()/ y;
-        }
-
     }
 
     /**
