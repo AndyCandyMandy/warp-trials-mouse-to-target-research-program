@@ -78,7 +78,7 @@ public class AppController {
                          break;
                      }
                      case FLICK: {
-                         if (keyEvent.getCode() == KeyCode.CONTROL) {
+                         if (keyEvent.getCode() == KeyCode.CONTROL || keyEvent.getCode() == KeyCode.COMMAND) {
                              model.setFlickTracking(true);
                              model.saveFlickStartCoords();
                          }
