@@ -43,7 +43,21 @@ public class AppController {
                     model.toggleWarps();
                 }
                  switch (model.getCurrentMechanism()) {
-                     case USR_KEY -> {
+                     case GRID -> {
+                         if (keyEvent.getCode() == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
+                             warpMouse(1);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
+                             warpMouse(2);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
+                             warpMouse(3);
+                         }
+                         else if (keyEvent.getCode() == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
+                             warpMouse(4);
+                         }
+                     }
+                    case USR_KEY -> {
                          // Display hotkey bar and warp location(s)
                          if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
                              if (!model.getWarps().isEmpty()) {

@@ -66,7 +66,6 @@ public class AppModel {
         warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0);
         sysDefClickPositions = new ArrayList<>();
         gridPoints = new ArrayList<>();
-        warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0, 0.0);
 
         this.width = w;
         this.height = h;
@@ -249,10 +248,6 @@ public class AppModel {
      */
     public double getFlickY() {
         return flickY;
-    }
-
-    public Mechanism getCurrentMechanism() {
-        return currentMechanism;
     }
 
     public double getMouseX() {
