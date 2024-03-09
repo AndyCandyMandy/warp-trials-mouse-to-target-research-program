@@ -49,7 +49,14 @@ public class AppView extends StackPane implements AppModelListener {
             case PRE_TRIAL -> {
                 // clear canvas
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
-                gc.fillText("Click on the targets, press ENTER to start.", myCanvas.getWidth() / 2, 50);
+                if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
+                    gc.fillText("Click 20 targets randomly on the screen (you can even repeat the same targets).", myCanvas.getWidth() / 2, 50);
+                    gc.fillText("Once done, you will be presented with highlighted targets to click.", myCanvas.getWidth() / 2, 80);
+                    gc.fillText("Click on the targets, press ENTER to start.", myCanvas.getWidth() / 2, 110);
+                }
+                else {
+                    gc.fillText("Click on the targets, press ENTER to start.", myCanvas.getWidth() / 2, 50);
+                }
             }
             case TRIAL -> {
                 // clear canvas

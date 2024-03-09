@@ -6,8 +6,8 @@ COURSE: CMPT481 - Term Project
 */
 package com.example.cmpt481_term_project;
 
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Line;
 
 import java.util.*;
 
@@ -26,9 +26,11 @@ public class AppModel {
     private double mouseX;
     private double mouseY;
 
+
     // System-defined Warp Mechanism attributes
     protected boolean sysDefTargetSelection = false;
-    protected List<Target> sysDefTargets;
+    protected List<Point2D> sysDefClickPositions;
+    protected List<Point2D> sysDefWarpLocations;
 
 
     // Flick mechanism related attributes
@@ -61,7 +63,7 @@ public class AppModel {
         targets = new ArrayList<>();
         warps = new ArrayList<>();
         warpTrail = new WarpTrail(0.0, 0.0, 0.0, 0.0);
-        sysDefTargets = new ArrayList<>();
+        sysDefClickPositions = new ArrayList<>();
 
         this.width = w;
         this.height = h;
@@ -366,21 +368,21 @@ public class AppModel {
      */
     public void recordClick(double x, double y) {
         int oldTarget = currTarget;
-        // Method for recording a click during trial mode
+        // Method for adding user click positions
         if (sysDefTargetSelection) {
-            for (Target target : targets) {
-                if (target.contains(x, y)) {
-                    sysDefTargets.add(targets.get(this.currTarget));
-                    System.out.println("Clicked target");
-                    if (sysDefTargets.size() > 19) {
-                        sysDefTargetSelection = false;
-                        this.currTarget = random.nextInt(numTargets);
-                        targets.get(currTarget).select();
-                        notifySubscribers();
-                    }
-                }
-            }
+            sysDefClickPositions.add(new Point2D(x, y));
+            System.out.println("Clicked target");
+            // If n number of coordinates has been clicked...
+            if (sysDefClickPositions.size() > 19) {
+                sysDefTargetSelection = false;
+                //...generate 4 average warp locations..
+                sysDefWarpLocations = sysDefGenerateWarpLocations((ArrayList<Point2D>) sysDefClickPositions);
+                //...and initialize normal target selection
+                this.currTarget = random.nextInt(numTargets);
+                targets.get(currTarget).select();
+                notifySubscribers();}
         }
+        // Method for recording a click during trial mode
         else if (hitTarget((int) x, (int) y)) {
             // Deselect old target
             targets.get(currTarget).deselect();
@@ -480,4 +482,62 @@ public class AppModel {
         }
     }
 
+    /**
+     * Generates Average Locations for Warping from the given list of coordinates
+     * and return them in an ArrayList
+     */
+    public ArrayList sysDefGenerateWarpLocations(ArrayList<Point2D> coordinatesList) {
+
+        ArrayList<Point2D> warpCoordinates = new ArrayList<>();
+
+        Collections.sort(coordinatesList, new Comparator<Point2D>() {
+            @Override
+            public int compare(Point2D p1, Point2D p2) {
+                if (p1.getX() < p2.getX()) {
+                    return -1;
+                } else if (p1.getX() > p2.getX()) {
+                    return 1;
+                } else {
+                    // X values are equal, compare Y
+                    if (p1.getY() < p2.getY()) {
+                        return -1;
+                    } else if (p1.getY() > p2.getY()) {
+                        return 1;
+                    } else {
+                        return 0; // Points are equal
+                    }
+                }
+            }
+        });
+
+        int size = coordinatesList.size();
+        int subArraySize = size / 4;
+
+        ArrayList<Point2D> array1 = new ArrayList<>(coordinatesList.subList(0, subArraySize));
+        ArrayList<Point2D> array2 = new ArrayList<>(coordinatesList.subList(subArraySize, 2 * subArraySize));
+        ArrayList<Point2D> array3 = new ArrayList<>(coordinatesList.subList(2 * subArraySize, 3 * subArraySize));
+        ArrayList<Point2D> array4 = new ArrayList<>(coordinatesList.subList(3 * subArraySize, size));
+
+        warpCoordinates.add(calculateAverage(array1));
+        warpCoordinates.add(calculateAverage(array2));
+        warpCoordinates.add(calculateAverage(array3));
+        warpCoordinates.add(calculateAverage(array4));
+
+        return warpCoordinates;
+    }
+
+    /*
+     * Helper function to calculate the average Point2D
+     */
+    private Point2D calculateAverage(ArrayList<Point2D> points) {
+        double sumX = 0;
+        double sumY = 0;
+
+        for (Point2D point : points) {
+            sumX += point.getX();
+            sumY += point.getY();
+        }
+
+        return new Point2D(sumX / points.size(), sumY / points.size());
+    }
 }
