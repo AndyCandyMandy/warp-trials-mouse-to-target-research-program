@@ -7,6 +7,7 @@ COURSE: CMPT481 - Term Project
 package com.example.cmpt481_term_project;
 
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
 import java.util.*;
@@ -48,6 +49,11 @@ public class AppModel {
 
     public enum Mechanism {GRID, USR_KEY, SYS_DEF, FLICK}
 
+    public enum TrialMode {RANDOM_TARGETS, CLUSTER_TARGETS, REAL_UI}
+    private TrialMode trialMode;
+
+    // Real UI image
+    Image uiImage;
 
 
     private Mechanism currentMechanism;
@@ -81,6 +87,9 @@ public class AppModel {
 
         this.currentMode = AppMode.MECH_SELECT;
 
+        // set default trial mode to RANDOM_TARGETS
+        this.trialMode = TrialMode.REAL_UI;
+
         // Create timer and timertask for fading out mouse trail
         fadeTimer = new Timer();
 
@@ -88,6 +97,9 @@ public class AppModel {
         flickX = 0.0;
         flickY = 0.0;
         trackingFlick = false;
+
+        // get UI image
+        uiImage = new Image("/UnityUI.png");
     }
 
     /**
@@ -115,6 +127,13 @@ public class AppModel {
 
         };
         fadeTimer.scheduleAtFixedRate(fadeTask, 0L, 50L);
+    }
+
+    /**
+     * Get the UI image
+     */
+    public Image getUIImage() {
+        return this.uiImage;
     }
 
     /**
@@ -388,6 +407,13 @@ public class AppModel {
      */
     public AppMode getCurrentMode() {
         return currentMode;
+    }
+
+    /**
+     * Returns the current trial mode
+     */
+    public TrialMode getTrialMode() {
+        return trialMode;
     }
 
     /**
