@@ -15,7 +15,6 @@ public class AppModel {
     private List<AppModelListener> subscribers;
     private List<Target> targets;
     private List<WarpLocation> warps;
-    private List<GridPointer> gridPoints;
     private WarpTrail warpTrail;
     private boolean showWarps;
     private int height;
@@ -26,6 +25,11 @@ public class AppModel {
     private int currTarget;
     private double mouseX;
     private double mouseY;
+
+    // Grid-defined Warp Mechanism Attributes
+    private List<GridPointer> gridPoints;
+    private int gridRow = 5;
+    private int gridCollumn = 4;
 
 
     // System-defined Warp Mechanism attributes
@@ -77,7 +81,7 @@ public class AppModel {
         this.mouseX = 0;
         this.mouseY = 0;
 
-        setUpGridPoints((double) this.width / 100, (double) this.height / 100);
+        setUpGridPoints(getGridRow(), getGridCollumn());
 
         this.currentMode = AppMode.MECH_SELECT;
 
@@ -323,16 +327,25 @@ public class AppModel {
         return this.gridPoints;
     }
 
+    public int getGridRow() {
+        return this.gridRow;
+    }
+
+    public int getGridCollumn() {
+        return this.gridCollumn;
+    }
+
     public void setUpGridPoints(double x, double y) {
-        double yPos = this.width/ x;
-        double xPos = this.height/ y;
-        for (int i = 1; i <= x - 1; i++) {
-            for (int j = 1; j <= y - 1; j++) {
+        double xPos = this.width / x;
+        double yPos = this.height / y;
+        for (int i = 1; i <= x - 2; i++) {
+            for (int j = 1; j <= y; j++) {
                 this.gridPoints.add(new GridPointer(xPos, yPos));
-                yPos += this.width / x;
+                System.out.println("[ " + xPos + ", " + yPos + " ]");
+                xPos += this.width / x;
             }
-            yPos = this.width / x;
-            xPos += this.height / y;
+            xPos = this.width / x;
+            yPos += this.height / y;
         }
     }
 
