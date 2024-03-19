@@ -19,6 +19,9 @@ public class AppController {
 
     Canvas canvas;
 
+    /* Attributes for target creation
+    double x, y, w, h; */
+
     /**
      * Handles a key press
      *
@@ -39,6 +42,13 @@ public class AppController {
                 }
             }
             case TRIAL -> {
+                /* code for outputting all target information - USED FOR TARGET CREATION
+                if (keyEvent.getCode() == KeyCode.ENTER) {
+                    for (Target t : model.getTargets()) {
+                        // get string of each created target, and output to console
+                        System.out.println(t.toString());
+                    }
+                } */
                  if (keyEvent.getCode() == KeyCode.W) {
                     model.toggleWarps();
                 }
@@ -162,7 +172,9 @@ public class AppController {
      * @param event - The mouse event
      */
     public void handlePress(MouseEvent event) {
-
+        /* Adding code here for creating the UI targets - FOR TARGET CREATION
+        x = event.getX();
+        y = event.getY(); */
     }
 
     /**
@@ -199,6 +211,12 @@ public class AppController {
                         System.out.println("You have reached your warp capacity");
                     }
                 }
+                /* More for creating targets - FOR TARGET CREATION
+                w = event.getX() - x;
+                h = event.getY() - y;
+                RectTarget t = new RectTarget(x, y, w, h);
+                t.select();
+                model.addTarget(t); */
             }
         }
     }

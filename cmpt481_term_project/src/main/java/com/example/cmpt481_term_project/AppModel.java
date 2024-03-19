@@ -10,6 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
+import java.io.*;
 import java.util.*;
 
 public class AppModel {
@@ -41,8 +42,6 @@ public class AppModel {
     private boolean trackingFlick;
 
 
-
-
     public enum AppMode {MECH_SELECT, PRE_TRIAL, TRIAL, DONE}
 
     private AppMode currentMode;
@@ -50,6 +49,7 @@ public class AppModel {
     public enum Mechanism {GRID, USR_KEY, SYS_DEF, FLICK}
 
     public enum TrialMode {RANDOM_TARGETS, CLUSTER_TARGETS, REAL_UI}
+
     private TrialMode trialMode;
 
     // Real UI image
@@ -111,10 +111,8 @@ public class AppModel {
         fadeTimer = new Timer();
 
         warpTrail.reset();
-        fadeTask = new TimerTask()
-        {
-            public void run()
-            {
+        fadeTask = new TimerTask() {
+            public void run() {
                 // Reduce thickness and opacity until it disappears
                 if (warpTrail.getOpacity() > 0) {
                     warpTrail.fadeStep();
@@ -147,6 +145,7 @@ public class AppModel {
 
     /**
      * Checks and returns if the min distance has been reached for creating the flick line
+     *
      * @return - True if you reached the min distance, false otherwise
      */
     public boolean reachedMinFlickDistance() {
@@ -156,6 +155,7 @@ public class AppModel {
 
     /**
      * Sets the flag indicating that the flick is being tracked
+     *
      * @param b - Flag that indicates that the flick is being tracked
      */
     public void setFlickTracking(boolean b) {
@@ -164,6 +164,7 @@ public class AppModel {
 
     /**
      * Returns the status of the flick tracking flag
+     *
      * @return
      */
     public boolean trackingFlick() {
@@ -172,6 +173,7 @@ public class AppModel {
 
     /**
      * Method for getting and returning the flick target based on the longer flick line
+     *
      * @param x2 - the start position x coord
      * @param y2 - the start position y coord
      * @param x3 - the end position x coord
@@ -182,10 +184,10 @@ public class AppModel {
         int closestWarp = -1;
         double dist = Double.MAX_VALUE;
         for (int i = 0; i < warps.size(); i++) {
-            if (calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY()) < dist &&
+            if (calculateDistanceToLine(x2, y2, x3, y3, warps.get(i).getX(), warps.get(i).getY()) < dist &&
                     calculateAngle(x3, y3, x2, y2, warps.get(i).getX(), warps.get(i).getY()) < 45.0) {
                 closestWarp = i + 1;
-                dist = calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY());
+                dist = calculateDistanceToLine(x2, y2, x3, y3, warps.get(i).getX(), warps.get(i).getY());
             }
         }
         //System.out.println("Angle: " + calculateAngle(x3, y3, x2, y2, warps.get(closestWarp - 1).getX(), warps.get(closestWarp - 1).getY()));
@@ -194,6 +196,7 @@ public class AppModel {
 
     /**
      * Method that calculates the distance between two points
+     *
      * @param x1 - 1st point, x coord
      * @param y1 - 1st point, y coord
      * @param x2 - 2nd point, x coord
@@ -211,6 +214,7 @@ public class AppModel {
 
     /**
      * Calculates the distance from a point to a line
+     *
      * @param x1 - 1st point of line, x coord
      * @param y1 - 1st point of line, y coord
      * @param x2 - 2nd point of line, x coord
@@ -230,6 +234,7 @@ public class AppModel {
 
     /**
      * Calculates the angle formed by three points where one point is shared between the two lines
+     *
      * @param x1 - 1st point, x coord
      * @param y1 - 1st point, y coord
      * @param x2 - 2nd point, x coord - Shared point
@@ -256,13 +261,16 @@ public class AppModel {
 
     /**
      * Method for getting the saved flick x coord
+     *
      * @return - Returns the flick x coord
      */
     public double getFlickX() {
         return flickX;
     }
+
     /**
      * Method for getting the saved flick y coord
+     *
      * @return - Returns the flick y coord
      */
     public double getFlickY() {
@@ -324,6 +332,7 @@ public class AppModel {
 
     /**
      * Method for getting list of warps
+     *
      * @return - Returns the WarpLocation ArrayList
      */
     public List<WarpLocation> getWarps() {
@@ -332,6 +341,7 @@ public class AppModel {
 
     /**
      * Returns if warps are toggled to be visible
+     *
      * @return
      */
     public boolean isWarpsVisible() {
@@ -343,8 +353,8 @@ public class AppModel {
     }
 
     public void setUpGridPoints(double x, double y) {
-        double yPos = this.width/ x;
-        double xPos = this.height/ y;
+        double yPos = this.width / x;
+        double xPos = this.height / y;
         for (int i = 1; i <= x - 1; i++) {
             for (int j = 1; j <= y - 1; j++) {
                 this.gridPoints.add(new GridPointer(xPos, yPos));
@@ -432,10 +442,11 @@ public class AppModel {
                 //...and initialize normal target selection
                 this.currTarget = random.nextInt(numTargets);
                 targets.get(currTarget).select();
-                notifySubscribers();}
+                notifySubscribers();
+            }
         }
         // Method for recording a click during trial mode
-        else if (hitTarget((int) x, (int) y)) {
+        else if (targets.size() > 0 && hitTarget((int) x, (int) y)) {
             // Deselect old target
             targets.get(currTarget).deselect();
             // Select new target
@@ -512,10 +523,41 @@ public class AppModel {
      * Generates a selection of targets for the REAl UI trial mode
      */
     public void generateUITargets() {
-        // create rectangular targets from array
-        RectTarget t = new RectTarget(250,250,150,300);
-        this.addTarget(t);
-        t.select();
+        // create rectangular targets from UnityUITargets.txt
+        try {
+            // Get the input stream for the file from resources
+            InputStream is = getClass().getClassLoader().getResourceAsStream("UnityUITargets.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Split the line by space to extract four double values
+                String[] parts = line.trim().split("\\s+");
+                if (parts.length != 4) {
+                    // Incorrect format, skip this line
+                    System.out.println("Skipping line - Incorrect number of values: " + line);
+                    continue;
+                }
+
+                // Parse the double values
+                double x = Double.parseDouble(parts[0]);
+                double y = Double.parseDouble(parts[1]);
+                double width = Double.parseDouble(parts[2]);
+                double height = Double.parseDouble(parts[3]);
+
+                // Create RectTarget object and add it to the list
+                RectTarget t = new RectTarget(x, y, width, height);
+                targets.add(t);
+            }
+
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Select a random target to start
+        this.currTarget = random.nextInt(numTargets);
+        targets.get(currTarget).select();
 
         notifySubscribers();
     }

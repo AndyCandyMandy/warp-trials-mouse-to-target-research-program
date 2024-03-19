@@ -30,7 +30,6 @@ public class CircleTarget implements Target{
      * Draws the current target
      *
      * @param gc        - GraphicsContext to use to draw
-     * @param targetNum - Number drawn inside target
      */
     public void drawTarget(GraphicsContext gc) {
         if (selected) {
