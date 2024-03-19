@@ -440,7 +440,7 @@ public class AppModel {
                 //...generate 4 average warp locations..
                 sysDefWarpLocations = sysDefGenerateWarpLocations((ArrayList<Point2D>) sysDefClickPositions);
                 //...and initialize normal target selection
-                this.currTarget = random.nextInt(numTargets);
+                this.currTarget = random.nextInt(targets.size());
                 targets.get(currTarget).select();
                 notifySubscribers();
             }
@@ -451,7 +451,7 @@ public class AppModel {
             targets.get(currTarget).deselect();
             // Select new target
             while (currTarget == oldTarget) {
-                this.currTarget = random.nextInt(numTargets);
+                this.currTarget = random.nextInt(targets.size());
             }
             targets.get(currTarget).select();
             numTrials--;
@@ -556,7 +556,7 @@ public class AppModel {
         }
 
         // Select a random target to start
-        this.currTarget = random.nextInt(numTargets);
+        this.currTarget = random.nextInt(targets.size());
         targets.get(currTarget).select();
 
         notifySubscribers();
@@ -592,7 +592,7 @@ public class AppModel {
         }
 
         if (!sysDefTargetSelection) {
-            this.currTarget = random.nextInt(numTargets);
+            this.currTarget = random.nextInt(targets.size());
             targets.get(currTarget).select();
 
             notifySubscribers();

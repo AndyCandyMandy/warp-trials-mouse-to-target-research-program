@@ -42,7 +42,7 @@ public class RectTarget implements Target{
         if (selected) {
             gc.setFill(color(1, 1, 0, 0.4));
         } else {
-            gc.setFill(color(0, 0, 0, 0));
+            gc.setFill(color(1, 1, 1, 0));
         }
 
         gc.fillRect(x, y, w, h);
