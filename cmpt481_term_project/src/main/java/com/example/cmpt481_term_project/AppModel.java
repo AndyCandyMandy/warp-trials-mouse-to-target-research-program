@@ -516,58 +516,84 @@ public class AppModel {
      * Generates Average Locations for Warping from the given list of coordinates
      * and return them in an ArrayList
      */
-    public ArrayList sysDefGenerateWarpLocations(ArrayList<Point2D> coordinatesList) {
+    public ArrayList<Point2D> sysDefGenerateWarpLocations(ArrayList<Point2D> coordinatesList) {
+        int numClusters = 4;
 
-        ArrayList<Point2D> warpCoordinates = new ArrayList<>();
+        ArrayList<Point2D> centroids = initializeCentroids(coordinatesList, numClusters);
 
-        Collections.sort(coordinatesList, new Comparator<Point2D>() {
-            @Override
-            public int compare(Point2D p1, Point2D p2) {
-                if (p1.getX() < p2.getX()) {
-                    return -1;
-                } else if (p1.getX() > p2.getX()) {
-                    return 1;
-                } else {
-                    // X values are equal, compare Y
-                    if (p1.getY() < p2.getY()) {
-                        return -1;
-                    } else if (p1.getY() > p2.getY()) {
-                        return 1;
-                    } else {
-                        return 0; // Points are equal
-                    }
-                }
-            }
-        });
-
-        int size = coordinatesList.size();
-        int subArraySize = size / 4;
-
-        ArrayList<Point2D> array1 = new ArrayList<>(coordinatesList.subList(0, subArraySize));
-        ArrayList<Point2D> array2 = new ArrayList<>(coordinatesList.subList(subArraySize, 2 * subArraySize));
-        ArrayList<Point2D> array3 = new ArrayList<>(coordinatesList.subList(2 * subArraySize, 3 * subArraySize));
-        ArrayList<Point2D> array4 = new ArrayList<>(coordinatesList.subList(3 * subArraySize, size));
-
-        warpCoordinates.add(calculateAverage(array1));
-        warpCoordinates.add(calculateAverage(array2));
-        warpCoordinates.add(calculateAverage(array3));
-        warpCoordinates.add(calculateAverage(array4));
-
-        return warpCoordinates;
-    }
-
-    /*
-     * Helper function to calculate the average Point2D
-     */
-    private Point2D calculateAverage(ArrayList<Point2D> points) {
-        double sumX = 0;
-        double sumY = 0;
-
-        for (Point2D point : points) {
-            sumX += point.getX();
-            sumY += point.getY();
+        for (int i = 0; i < 20; i++) {
+            ArrayList<ArrayList<Point2D>> clusters = assignToClusters(coordinatesList, centroids);
+            centroids = recalculateCentroids(clusters);
         }
 
-        return new Point2D(sumX / points.size(), sumY / points.size());
+        return centroids;
+    }
+
+    /**
+     * Helper function for Mechanism-3 sysDefGenerateWarpLocations function
+     */
+    private ArrayList<Point2D> initializeCentroids(ArrayList<Point2D> data, int k) {
+        Random random = new Random();
+        ArrayList<Point2D> centroids = new ArrayList<>();
+        while (centroids.size() < k) {
+            int randomIndex = random.nextInt(data.size());
+            Point2D point = data.get(randomIndex);
+            if (!centroids.contains(point)) {
+                centroids.add(point);
+            }
+        }
+        return centroids;
+    }
+
+    /**
+     * Helper function for Mechanism-3 sysDefGenerateWarpLocations function
+     */    private ArrayList<ArrayList<Point2D>> assignToClusters(ArrayList<Point2D> data, ArrayList<Point2D> centroids) {
+        ArrayList<ArrayList<Point2D>> clusters = new ArrayList<>();
+        for (int i = 0; i < centroids.size(); i++) {
+            clusters.add(new ArrayList<>());
+        }
+
+        for (Point2D point : data) {
+            double minDistance = Double.MAX_VALUE;
+            int closestCluster = -1;
+            for (int i = 0; i < centroids.size(); i++) {
+                double distance = calculateDistance(point, centroids.get(i));
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestCluster = i;
+                }
+            }
+            clusters.get(closestCluster).add(point);
+        }
+        return clusters;
+    }
+
+    /**
+     * Helper function for Mechanism-3 sysDefGenerateWarpLocations function
+     */    private ArrayList<Point2D> recalculateCentroids(ArrayList<ArrayList<Point2D>> clusters) {
+        ArrayList<Point2D> newCentroids = new ArrayList<>();
+        for (ArrayList<Point2D> cluster : clusters) {
+            if (cluster.isEmpty()) {
+                // Handle empty cluster case (reinitialize or adjust strategy)
+            } else {
+                double sumX = 0, sumY = 0;
+                for (Point2D point : cluster) {
+                    sumX += point.getX();
+                    sumY += point.getY();
+                }
+                newCentroids.add(new Point2D(sumX / cluster.size(), sumY / cluster.size()));
+            }
+        }
+        return newCentroids;
+    }
+
+    /**
+     * Calculates the distance between two points
+     */
+    private static double calculateDistance(Point2D p1, Point2D p2) {
+        // distance = sqrt((x2 - x1)^2 + (y2 - y1)^2)
+        double deltaX = p2.getX() - p1.getX();
+        double deltaY = p2.getY() - p1.getY();
+        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
     }
 }
