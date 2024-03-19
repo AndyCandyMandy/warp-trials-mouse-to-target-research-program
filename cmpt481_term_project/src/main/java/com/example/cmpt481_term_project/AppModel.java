@@ -398,8 +398,8 @@ public class AppModel {
      * @return - true if hit, false otherwise
      */
     public boolean hitTarget(int x, int y) {
-        Target targetHit = targets.get(this.currTarget);
-        return targetHit.contains(x, y);
+        Target circleTargetHit = targets.get(this.currTarget);
+        return circleTargetHit.contains(x, y);
     }
 
     /**
@@ -489,7 +489,14 @@ public class AppModel {
                 if (getCurrentMechanism() == Mechanism.SYS_DEF) {
                     sysDefTargetSelection = true;
                 }
-                generateRandomTargets();
+                switch (this.trialMode) {
+                    case RANDOM_TARGETS -> {
+                        generateRandomTargets();
+                    }
+                    case REAL_UI -> {
+                        generateUITargets();
+                    }
+                }
             }
             case TRIAL -> {
                 this.currentMode = AppMode.DONE;
@@ -498,6 +505,18 @@ public class AppModel {
                 System.exit(1);
             }
         }
+        notifySubscribers();
+    }
+
+    /**
+     * Generates a selection of targets for the REAl UI trial mode
+     */
+    public void generateUITargets() {
+        // create rectangular targets from array
+        RectTarget t = new RectTarget(250,250,150,300);
+        this.addTarget(t);
+        t.select();
+
         notifySubscribers();
     }
 
@@ -523,8 +542,8 @@ public class AppModel {
                     }
                 }
                 if (!overlap) {
-                    Target newTarget = new Target(targetX, targetY, targetRadius);
-                    this.addTarget(newTarget);
+                    CircleTarget newCircleTarget = new CircleTarget(targetX, targetY, targetRadius);
+                    this.addTarget(newCircleTarget);
                     break;
                 }
             }

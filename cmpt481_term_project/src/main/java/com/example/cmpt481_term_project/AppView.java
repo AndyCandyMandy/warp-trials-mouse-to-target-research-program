@@ -69,6 +69,11 @@ public class AppView extends StackPane implements AppModelListener {
                         // draw image
                         gc.drawImage(model.getUIImage(), 0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 
+                        // draw rectangular targets
+                        for (Target t : model.getTargets()) {
+                            t.drawTarget(gc);
+                        }
+
                         if (model.isWarpsVisible()) {
 
                             // draw grid if in "GRID" mechanism state
@@ -92,7 +97,7 @@ public class AppView extends StackPane implements AppModelListener {
                         // draw targets
                         int targetNumber = 1;
                         for (Target t : model.getTargets()) {
-                            t.drawTargets(gc, targetNumber);
+                            t.drawTarget(gc);
                             targetNumber++;
                         }
 
