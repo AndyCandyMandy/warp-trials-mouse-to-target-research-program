@@ -46,7 +46,7 @@ public class AppModel {
 
     private AppMode currentMode;
 
-    public enum Mechanism {GRID, USR_KEY, SYS_DEF, FLICK}
+    public enum Mechanism {NO_MECH, GRID, USR_KEY, SYS_DEF, FLICK}
 
 
 
@@ -430,6 +430,9 @@ public class AppModel {
      */
     public void setMechanism(KeyCode k) {
         switch (k) {
+            case DIGIT0 -> {
+                this.currentMechanism = Mechanism.NO_MECH;
+            }
             case DIGIT1 -> {
                 this.currentMechanism = Mechanism.GRID;
             }
@@ -438,7 +441,6 @@ public class AppModel {
             }
             case DIGIT3 -> {
                 this.currentMechanism = Mechanism.SYS_DEF;
-
             }
             case DIGIT4 -> {
                 this.currentMechanism = Mechanism.FLICK;
@@ -471,6 +473,13 @@ public class AppModel {
             case DONE -> {
                 System.exit(1);
             }
+        }
+        notifySubscribers();
+    }
+
+    public void returnToMechanismSelect() {
+        switch (this.currentMode) {
+            case PRE_TRIAL -> this.currentMode = AppMode.MECH_SELECT;
         }
         notifySubscribers();
     }

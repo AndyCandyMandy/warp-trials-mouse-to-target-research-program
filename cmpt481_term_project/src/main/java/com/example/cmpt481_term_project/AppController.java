@@ -27,7 +27,8 @@ public class AppController {
     public void handleKeyPressed(KeyEvent keyEvent) {
         switch (model.getCurrentMode()) {
             case MECH_SELECT -> {
-                if (keyEvent.getCode() == KeyCode.DIGIT1 || keyEvent.getCode() == KeyCode.DIGIT2 ||
+                if (    keyEvent.getCode() == KeyCode.DIGIT0 || keyEvent.getCode() == KeyCode.DIGIT1 ||
+                        keyEvent.getCode() == KeyCode.DIGIT2 ||
                         keyEvent.getCode() == KeyCode.DIGIT3 || keyEvent.getCode() == KeyCode.DIGIT4) {
                     model.setMechanism(keyEvent.getCode());
                     model.nextMode();
@@ -37,12 +38,17 @@ public class AppController {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     model.nextMode();
                 }
+                if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                    System.out.println("Escape pressed");
+                    model.returnToMechanismSelect();
+                }
             }
             case TRIAL -> {
                  if (keyEvent.getCode() == KeyCode.W) {
                     model.toggleWarps();
                 }
                  switch (model.getCurrentMechanism()) {
+                     case NO_MECH:
                      case GRID:
                      case USR_KEY: {
                          // Display hotkey bar and warp location(s)
