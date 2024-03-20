@@ -45,7 +45,11 @@ public class AppController {
             }
             case TRIAL -> {
                  if (keyEvent.getCode() == KeyCode.W) {
-                    model.toggleWarps();
+                     // Warp the user's cursor
+                     model.toggleWarps();
+
+                     // Add to number of warps
+                     model.addToWarpCount();
                 }
                  switch (model.getCurrentMechanism()) {
                      case NO_MECH:
@@ -56,7 +60,6 @@ public class AppController {
                              if (!model.getWarps().isEmpty()) {
                                  // Show/hide warp location(s)
                                  model.toggleWarps();
-                                 System.out.println(model.isWarpsVisible());
                              }
                          }
                          else  {
@@ -179,8 +182,27 @@ public class AppController {
     public void handleReleased(MouseEvent event) {
         switch (model.getCurrentMode()) {
             case TRIAL -> {
+                // Record clicks and errors
                 if (event.getButton() == MouseButton.PRIMARY) {
-                    model.recordClick(event.getX(), event.getY());
+                    // Check whether user made error
+                    if (!model.hitTarget(event.getX(), event.getY())) {
+                        model.addToErrorCount();
+                    }
+                    // Check whether user made correct selection
+                    else {
+                        model.recordClick(event.getX(), event.getY());
+
+                        // Print results to console
+                        System.out.println("Time to select (ms):      " + model.getSelectionTime() + "\n" +
+                                            "Number of click errors:   " + model.getErrorCount() + "\n" +
+                                            "Number of warps:          " + model.getWarpCount() + "\n" +
+                                            "Current Mechanism:        " + model.getCurrentMechanism() + "\n");
+
+                        // Reset the timer for the next selection
+                        model.getElapsedTime();
+                        // Reset number of errors
+                        model.resetErrorCount();
+                    }
                 } else if (event.getButton() == MouseButton.SECONDARY && model.getCurrentMechanism() != AppModel.Mechanism.SYS_DEF) {
                     // The capacity for warp locations is locked 4 areas. This check verifies the current number
                     if (model.getWarps().size() != 4) {

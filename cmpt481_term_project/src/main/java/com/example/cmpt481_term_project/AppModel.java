@@ -16,16 +16,24 @@ public class AppModel {
     private List<Target> targets;
     private List<WarpLocation> warps;
     private List<GridPointer> gridPoints;
+
+    // Warping information
     private WarpTrail warpTrail;
     private boolean showWarps;
+    private int numOfWarps;
+
     private int height;
     private int width;
     private int numTargets;
     private int numTrials;
     private int targetRadius;
     private int currTarget;
+
+    // Mouse information
     private double mouseX;
     private double mouseY;
+    private int numOfErrors;
+    private long selectionTime;
 
 
     // System-defined Warp Mechanism attributes
@@ -73,9 +81,13 @@ public class AppModel {
         this.numTargets = 50;
         this.numTrials = 10;
         this.showWarps = false;
+        this.numOfWarps = 0;
 
         this.mouseX = 0;
         this.mouseY = 0;
+
+        this.numOfErrors = 0;
+        this.selectionTime = 0;
 
         setUpGridPoints((double) this.width / 100, (double) this.height / 100);
 
@@ -88,6 +100,62 @@ public class AppModel {
         flickX = 0.0;
         flickY = 0.0;
         trackingFlick = false;
+    }
+
+    /**
+     * Returns the current selection time
+     */
+    public long getSelectionTime() {
+        return System.currentTimeMillis() - selectionTime;
+    }
+
+    /**
+     * Either starts or resets the timer for the trial
+     */
+    public void getElapsedTime() {
+        selectionTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Increments the warp count by 1
+     */
+    public void addToWarpCount() {
+        numOfWarps++;
+    }
+
+    /**
+     * Returns the error count
+     */
+    public int getWarpCount() {
+        return numOfWarps;
+    }
+
+    /**
+     * Resets the error count to 0
+     */
+    public void resetWarpCount() {
+        numOfWarps = 0;
+    }
+
+    /**
+     * Increments the error count by 1
+     */
+    public void addToErrorCount() {
+        numOfErrors++;
+    }
+
+    /**
+     * Returns the error count
+     */
+    public int getErrorCount() {
+       return numOfErrors;
+    }
+
+    /**
+     * Resets the error count to 0
+     */
+    public void resetErrorCount() {
+        numOfErrors = 0;
     }
 
     /**
@@ -378,7 +446,7 @@ public class AppModel {
      * @param y - the y coordinate of the point to check
      * @return - true if hit, false otherwise
      */
-    public boolean hitTarget(int x, int y) {
+    public boolean hitTarget(double x, double y) {
         Target targetHit = targets.get(this.currTarget);
         return targetHit.contains(x, y);
     }
@@ -461,6 +529,9 @@ public class AppModel {
                 this.currentMode = AppMode.PRE_TRIAL;
             }
             case PRE_TRIAL -> {
+                // Start timer for trial
+                getElapsedTime();
+
                 this.currentMode = AppMode.TRIAL;
                 if (getCurrentMechanism() == Mechanism.SYS_DEF) {
                     sysDefTargetSelection = true;
