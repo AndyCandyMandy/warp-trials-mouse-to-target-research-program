@@ -70,7 +70,6 @@ public class AppView extends StackPane implements AppModelListener {
                     targetNumber++;
                 }
 
-
                 if (model.isWarpsVisible()) {
 
                     // draw grid if in "GRID" mechanism state

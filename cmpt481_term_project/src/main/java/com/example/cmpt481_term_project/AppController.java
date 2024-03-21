@@ -55,41 +55,17 @@ public class AppController {
                              if (keyEvent.isControlDown()) {
                                  model.toggleWarps();
                              }
-                             else if (keyEvent.getCode() == KeyCode.Q) {
-                                 warpMouse(1);
+                             else if (keyEvent.getCode() == KeyCode.UP) {
+                                 warpMouse(model.warpUpGrid(model.getMouseX(), model.getMouseY()));
                              }
-                             else if (keyEvent.getCode() == KeyCode.W) {
-                                 warpMouse(2);
+                             else if (keyEvent.getCode() == KeyCode.DOWN) {
+                                 warpMouse(model.warpDownGrid(model.getMouseX(), model.getMouseY() + 1));
                              }
-                             else if (keyEvent.getCode() == KeyCode.E) {
-                                 warpMouse(3);
+                             else if (keyEvent.getCode() == KeyCode.LEFT) {
+
                              }
-                             else if (keyEvent.getCode() == KeyCode.R) {
-                                 warpMouse(4);
-                             }
-                             else if (keyEvent.getCode() == KeyCode.A) {
-                                 warpMouse(5);
-                             }
-                             else if (keyEvent.getCode() == KeyCode.S) {
-                                 warpMouse(6);
-                             }
-                             else if (keyEvent.getCode() == KeyCode.D) {
-                                 warpMouse(7);
-                             }
-                             else if (keyEvent.getCode() == KeyCode.F) {
-                                 warpMouse(8);
-                             }
-                             else if (keyEvent.getCode() == KeyCode.Z) {
-                                 warpMouse(9);
-                             }
-                             else if (keyEvent.getCode() == KeyCode.X) {
-                                 warpMouse(10);
-                             }
-                             else if (keyEvent.getCode() == KeyCode.C) {
-                                 warpMouse(11);
-                             }
-                             else if (keyEvent.getCode() == KeyCode.V) {
-                                 warpMouse(12);
+                             else if (keyEvent.getCode() == KeyCode.RIGHT) {
+
                              }
                          }
 
@@ -163,6 +139,11 @@ public class AppController {
 
 
     public void warpMouse(int locationNumber) {
+        // Patch a tiny bug. Will delete later
+        if (locationNumber == 0) {
+            return;
+        }
+
         // Get the warp location in the list
         double warpX = model.getWarps().get(locationNumber - 1).getX();
         double warpY = model.getWarps().get(locationNumber - 1).getY();
