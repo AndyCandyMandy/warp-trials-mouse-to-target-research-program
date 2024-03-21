@@ -352,7 +352,7 @@ public class AppModel {
     public int warpUpGrid(double x, double y) {
         double adjacentY = 0;
         double shortestX = this.width;
-        int num = 0;
+        int numPos = 0;
 
         for (int i = 1; i <= this.gridPoints.size(); i++) {
             double len = Math.sqrt(Math.pow(x - this.gridPoints.get(i - 1).getX(), 2) + Math.pow(y - this.gridPoints.get(i - 1).getY(), 2));
@@ -362,18 +362,18 @@ public class AppModel {
 
                 if (y != this.gridPoints.get(i - 1).getY() && len < shortestX) {
                     shortestX = len;
-                    num = i;
+                    numPos = i;
                 }
 
             }
         }
-        return num;
+        return numPos;
     }
 
     public int warpDownGrid(double x, double y) {
         double adjacentY = this.height;
         double shortestX = this.width;
-        int num = 0;
+        int numPos = 0;
 
         for (int i = 1; i <= this.gridPoints.size(); i++) {
             double len = Math.sqrt(Math.pow(x - this.gridPoints.get(i - 1).getX(), 2) + Math.pow(y - this.gridPoints.get(i - 1).getY(), 2));
@@ -383,12 +383,54 @@ public class AppModel {
 
                 if (y != this.gridPoints.get(i - 1).getY() && len < shortestX) {
                     shortestX = len;
-                    num = i;
+                    numPos = i;
                 }
 
             }
         }
-        return num;
+        return numPos;
+    }
+
+    public int warpLeftGrid(double x, double y) {
+        double adjacentX = 0;
+        double shortestY = this.height;
+        int numPos = 0;
+
+        for (int i = 1; i <= this.gridPoints.size(); i++) {
+            double len = Math.sqrt(Math.pow(x - this.gridPoints.get(i - 1).getX(), 2) + Math.pow(y - this.gridPoints.get(i - 1).getY(), 2));
+            if (this.gridPoints.get(i - 1).getX() <= x && this.gridPoints.get(i - 1).getX() >= adjacentX) {
+                adjacentX = this.gridPoints.get(i -1).getX();
+
+
+                if (x != this.gridPoints.get(i - 1).getX() && len <= shortestY) {
+                    shortestY = len;
+                    numPos = i;
+                }
+
+            }
+        }
+        return numPos;
+    }
+
+    public int warpRightGrid(double x, double y) {
+        double adjacentX = this.width;
+        double shortestY = this.height;
+        int numPos = 0;
+
+        for (int i = 1; i <= this.gridPoints.size(); i++) {
+            double len = Math.sqrt(Math.pow(x - this.gridPoints.get(i - 1).getX(), 2) + Math.pow(y - this.gridPoints.get(i - 1).getY(), 2));
+            if (this.gridPoints.get(i - 1).getX() >= x && this.gridPoints.get(i - 1).getX() <= adjacentX) {
+                adjacentX = this.gridPoints.get(i -1).getX();
+
+
+                if (y != this.gridPoints.get(i - 1).getX() && len < shortestY) {
+                    shortestY = len;
+                    numPos = i;
+                }
+
+            }
+        }
+        return numPos;
     }
 
     public GridPointer findGridPoint(double x, double y) {

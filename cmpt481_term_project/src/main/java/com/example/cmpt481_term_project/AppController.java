@@ -62,10 +62,10 @@ public class AppController {
                                  warpMouse(model.warpDownGrid(model.getMouseX(), model.getMouseY() + 1));
                              }
                              else if (keyEvent.getCode() == KeyCode.LEFT) {
-
+                                 warpMouse(model.warpLeftGrid(model.getMouseX() - 1, model.getMouseY()));
                              }
                              else if (keyEvent.getCode() == KeyCode.RIGHT) {
-
+                                 warpMouse(model.warpRightGrid(model.getMouseX() + 1, model.getMouseY()));
                              }
                          }
 
