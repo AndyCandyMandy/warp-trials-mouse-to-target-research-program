@@ -341,7 +341,6 @@ public class AppModel {
         for (int i = 1; i <= x - 2; i++) {
             for (int j = 1; j <= y; j++) {
                 this.gridPoints.add(new GridPointer(xPos, yPos));
-                System.out.println("[ " + xPos + ", " + yPos + " ]");
                 xPos += this.width / x;
             }
             xPos = this.width / x;
