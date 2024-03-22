@@ -54,15 +54,14 @@ public class AppView extends StackPane implements AppModelListener {
                     gc.fillText("Click 20 targets randomly on the screen (you can even repeat the same targets).", myCanvas.getWidth() / 2, 50);
                     gc.fillText("Once done, you will be presented with highlighted targets to click.", myCanvas.getWidth() / 2, 80);
                     gc.fillText("Click on the targets, press ENTER to start.", myCanvas.getWidth() / 2, 110);
-                }
-                else {
+                } else {
                     gc.fillText("Click on the targets, press ENTER to start.", myCanvas.getWidth() / 2, 50);
                 }
             }
             case TRIAL -> {
 
-                switch(model.getTrialMode()) {
-                    case REAL_UI -> {
+                switch (model.getTrialMode()) {
+                    case REAL_UI:
                         // draw the REAL UI and populate the targets
                         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
 
@@ -73,24 +72,10 @@ public class AppView extends StackPane implements AppModelListener {
                         for (Target t : model.getTargets()) {
                             t.drawTarget(gc);
                         }
+                        break;
 
-                        if (model.isWarpsVisible()) {
-
-                            // draw grid if in "GRID" mechanism state
-                            if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
-                                drawGrid((int) getHeight()/100,(int) getWidth()/100);
-                            }
-                            // draw warp locations
-                            int warpNumber = 1;
-                            for (WarpLocation w : model.getWarps()) {
-                                w.drawWarpLocations(gc, warpNumber);
-                                warpNumber++;
-                            }
-                        }
-                        // Draw warp trail
-                        model.getWarpTrail().draw(gc);
-                    }
-                    case RANDOM_TARGETS -> {
+                    case CLUSTER_TARGETS:
+                    case RANDOM_TARGETS:
                         // clear canvas
                         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
                         gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 10));
@@ -100,28 +85,23 @@ public class AppView extends StackPane implements AppModelListener {
                             t.drawTarget(gc);
                             targetNumber++;
                         }
+                        break;
+                }
+                if (model.isWarpsVisible()) {
 
-
-                        if (model.isWarpsVisible()) {
-
-                            // draw grid if in "GRID" mechanism state
-                            if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
-                                drawGrid((int) getHeight()/100,(int) getWidth()/100);
-                            }
-                            // draw warp locations
-                            int warpNumber = 1;
-                            for (WarpLocation w : model.getWarps()) {
-                                w.drawWarpLocations(gc, warpNumber);
-                                warpNumber++;
-                            }
-                        }
-                        // Draw warp trail
-                        model.getWarpTrail().draw(gc);
+                    // draw grid if in "GRID" mechanism state
+                    if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
+                        drawGrid((int) getHeight() / 100, (int) getWidth() / 100);
                     }
-                    case CLUSTER_TARGETS -> {
-
+                    // draw warp locations
+                    int warpNumber = 1;
+                    for (WarpLocation w : model.getWarps()) {
+                        w.drawWarpLocations(gc, warpNumber);
+                        warpNumber++;
                     }
                 }
+                // Draw warp trail
+                model.getWarpTrail().draw(gc);
             }
             case DONE -> {
                 // clear canvas
@@ -139,17 +119,17 @@ public class AppView extends StackPane implements AppModelListener {
      * @param x - The amount of squares on the X-axis of the grid
      */
     public void drawGrid(int y, int x) {
-        double xPos = getHeight()/ y;
-        double yPos = getWidth()/x;
+        double xPos = getHeight() / y;
+        double yPos = getWidth() / x;
         gc.setFill(Color.rgb(0, 255, 50, 0.5));
         while (xPos < getHeight() || yPos < getWidth()) {
             if (xPos < getHeight()) {
                 gc.fillRect(0, xPos, getWidth(), 5);
-                xPos += getHeight()/ y;
+                xPos += getHeight() / y;
             }
             if (yPos < getWidth()) {
                 gc.fillRect(yPos, 0, 5, getHeight());
-                yPos += getWidth()/x;
+                yPos += getWidth() / x;
             }
         }
     }

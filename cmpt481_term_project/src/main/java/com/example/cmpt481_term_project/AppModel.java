@@ -52,6 +52,10 @@ public class AppModel {
 
     private TrialMode trialMode;
 
+    private int NUM_CLUSTERS = 4;
+
+    private Target[] clusterPoints = new CircleTarget[NUM_CLUSTERS];
+
     // Real UI image
     Image uiImage;
 
@@ -88,7 +92,8 @@ public class AppModel {
         this.currentMode = AppMode.MECH_SELECT;
 
         // set default trial mode to RANDOM_TARGETS
-        this.trialMode = TrialMode.REAL_UI;
+        this.trialMode = TrialMode.CLUSTER_TARGETS;
+
 
         // Create timer and timertask for fading out mouse trail
         fadeTimer = new Timer();
@@ -507,6 +512,9 @@ public class AppModel {
                     case REAL_UI -> {
                         generateUITargets();
                     }
+                    case CLUSTER_TARGETS -> {
+                        generateClusteredTargets();
+                    }
                 }
             }
             case TRIAL -> {
@@ -517,6 +525,73 @@ public class AppModel {
             }
         }
         notifySubscribers();
+    }
+
+    /**
+     * Method for generating clustered targets for a trial
+     */
+    public void generateClusteredTargets() {
+        random = new Random();
+        int min = targetRadius * 6;
+        int maxX = width - min;
+        int maxY = height - min;
+
+
+        // Create 5 random points to cluster targets around
+
+        for (int i = 0; i < NUM_CLUSTERS; i++) {
+            // create locations where targets can be clustered around
+            while (true) {
+                boolean overlap = false;
+                int targetX = random.nextInt(maxX - min + 1) + min;
+                int targetY = random.nextInt(maxY - min + 1) + min;
+                for (Target t : clusterPoints) {
+                    if (t != null && Math.sqrt(Math.pow(targetX - t.getX(), 2) + Math.pow(targetY - t.getY(), 2)) < min * 2) {
+                        overlap = true;
+                        break;
+                    }
+                }
+                if (!overlap) {
+                    CircleTarget newCircleTarget = new CircleTarget(targetX, targetY, min);
+                    clusterPoints[i] = newCircleTarget;
+                    //this.addTarget(newCircleTarget);
+                    break;
+                }
+            }
+        }
+        // created point to cluster around, now create targets around those points
+        min = targetRadius;
+        for (int i = 0; i < numTargets; i++) {
+            // create targets and give it random coords with no overlaps
+            double d = ((CircleTarget) clusterPoints[0]).getRadius();
+            while (true) {
+                boolean overlap = false;
+                int cluster = random.nextInt(NUM_CLUSTERS);
+                double nxt = random.nextGaussian();
+                double targetX = Math.clamp(clusterPoints[cluster].getX() + nxt * d / 2, min, maxX);
+                nxt = random.nextGaussian();
+                //System.out.println(nxt);
+                double targetY = Math.clamp(clusterPoints[cluster].getY() + nxt * d / 2, min, maxY);
+                for (Target t : targets) {
+                    if (Math.sqrt(Math.pow(targetX - t.getX(), 2) + Math.pow(targetY - t.getY(), 2)) < min * 2) {
+                        overlap = true;
+                        break;
+                    }
+                }
+                if (!overlap) {
+                    CircleTarget newCircleTarget = new CircleTarget(targetX, targetY, targetRadius);
+                    this.addTarget(newCircleTarget);
+                    break;
+                }
+            }
+        }
+
+        if (!sysDefTargetSelection) {
+            this.currTarget = random.nextInt(targets.size());
+            targets.get(currTarget).select();
+
+            notifySubscribers();
+        }
     }
 
     /**
