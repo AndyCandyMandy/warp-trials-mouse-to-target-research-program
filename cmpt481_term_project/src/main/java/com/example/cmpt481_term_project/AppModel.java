@@ -15,7 +15,6 @@ public class AppModel {
     private List<AppModelListener> subscribers;
     private List<Target> targets;
     private List<WarpLocation> warps;
-    private List<GridPointer> gridPoints;
 
     // Warping information
     private WarpTrail warpTrail;

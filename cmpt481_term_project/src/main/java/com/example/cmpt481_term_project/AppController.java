@@ -60,17 +60,17 @@ public class AppController {
                              if (keyEvent.isControlDown()) {
                                  model.toggleWarps();
                              }
-                             else if (keyEvent.getCode() == KeyCode.UP) {
-                                 warpMouse(model.warpUpGrid(model.getMouseX(), model.getMouseY()));
+                             else if (keyEvent.getCode() == KeyCode.W) {
+                                 warpMouse(model.warpUpGrid(model.getMouseX(), model.getMouseY() - 5));
                              }
-                             else if (keyEvent.getCode() == KeyCode.DOWN) {
-                                 warpMouse(model.warpDownGrid(model.getMouseX(), model.getMouseY() + 1));
+                             else if (keyEvent.getCode() == KeyCode.S) {
+                                 warpMouse(model.warpDownGrid(model.getMouseX(), model.getMouseY() + 5));
                              }
-                             else if (keyEvent.getCode() == KeyCode.LEFT) {
-                                 warpMouse(model.warpLeftGrid(model.getMouseX() - 1, model.getMouseY()));
+                             else if (keyEvent.getCode() == KeyCode.A) {
+                                 warpMouse(model.warpLeftGrid(model.getMouseX() - 5, model.getMouseY()));
                              }
-                             else if (keyEvent.getCode() == KeyCode.RIGHT) {
-                                 warpMouse(model.warpRightGrid(model.getMouseX() + 1, model.getMouseY()));
+                             else if (keyEvent.getCode() == KeyCode.D) {
+                                 warpMouse(model.warpRightGrid(model.getMouseX() + 5, model.getMouseY()));
                              }
                          }
 
