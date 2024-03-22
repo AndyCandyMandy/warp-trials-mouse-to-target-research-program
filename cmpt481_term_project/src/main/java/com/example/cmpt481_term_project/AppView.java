@@ -29,7 +29,6 @@ public class AppView extends StackPane implements AppModelListener {
     public AppView() {
         myCanvas = new Canvas(1500, 900);
         gc = myCanvas.getGraphicsContext2D();
-
         this.getChildren().add(myCanvas);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -54,6 +53,12 @@ public class AppView extends StackPane implements AppModelListener {
 
                         To begin, please select a mechanism by pressing [0-4].""",
                         myCanvas.getWidth() / 2, 50);
+            }
+            case TRIAL_SELECT -> {
+                // clear canvas
+                gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+                gc.fillText("Please select a trial type [1-3].", myCanvas.getWidth() / 2, 50);
+                gc.fillText("1 for Random, 2 for clusters, 3 for real UI", myCanvas.getWidth() / 2, 80);
             }
             case PRE_TRIAL -> {
                 // clear canvas
@@ -116,16 +121,34 @@ public class AppView extends StackPane implements AppModelListener {
                 }
             }
             case TRIAL -> {
-                // clear canvas
-                gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
-                gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 10));
-                // draw targets
-                int targetNumber = 1;
-                for (Target t : model.getTargets()) {
-                    t.drawTargets(gc, targetNumber);
-                    targetNumber++;
-                }
 
+                switch (model.getTrialMode()) {
+                    case REAL_UI:
+                        // draw the REAL UI and populate the targets
+                        gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+
+                        // draw image
+                        gc.drawImage(model.getUIImage(), 0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+
+                        // draw rectangular targets
+                        for (Target t : model.getTargets()) {
+                            t.drawTarget(gc);
+                        }
+                        break;
+
+                    case CLUSTER_TARGETS:
+                    case RANDOM_TARGETS:
+                        // clear canvas
+                        gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+                        gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 10));
+                        // draw targets
+                        int targetNumber = 1;
+                        for (Target t : model.getTargets()) {
+                            t.drawTarget(gc);
+                            targetNumber++;
+                        }
+                        break;
+                }
                 if (model.isWarpsVisible()) {
 
                     // draw grid if in "GRID" mechanism state
@@ -158,17 +181,17 @@ public class AppView extends StackPane implements AppModelListener {
      * @param x - The amount of squares on the X-axis of the grid
      */
     public void drawGrid(int y, int x) {
-        double xPos = getHeight()/ y;
-        double yPos = getWidth()/x;
+        double xPos = getHeight() / y;
+        double yPos = getWidth() / x;
         gc.setFill(Color.rgb(0, 255, 50, 0.5));
         while (xPos < getHeight() || yPos < getWidth()) {
             if (xPos < getHeight()) {
                 gc.fillRect(0, xPos, getWidth(), 5);
-                xPos += getHeight()/ y;
+                xPos += getHeight() / y;
             }
             if (yPos < getWidth()) {
                 gc.fillRect(yPos, 0, 5, getHeight());
-                yPos += getWidth()/x;
+                yPos += getWidth() / x;
             }
         }
     }

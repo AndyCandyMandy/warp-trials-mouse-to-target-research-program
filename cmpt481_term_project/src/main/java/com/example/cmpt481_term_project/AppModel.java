@@ -7,8 +7,10 @@ COURSE: CMPT481 - Term Project
 package com.example.cmpt481_term_project;
 
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
+import java.io.*;
 import java.util.*;
 
 public class AppModel {
@@ -52,14 +54,22 @@ public class AppModel {
     private boolean trackingFlick;
 
 
-
-
-    public enum AppMode {MECH_SELECT, PRE_TRIAL, TRIAL, DONE}
+    public enum AppMode {MECH_SELECT, TRIAL_SELECT, PRE_TRIAL, TRIAL, DONE}
 
     private AppMode currentMode;
 
     public enum Mechanism {NO_MECH, GRID, USR_KEY, SYS_DEF, FLICK}
 
+    public enum TrialMode {RANDOM_TARGETS, CLUSTER_TARGETS, REAL_UI}
+
+    private TrialMode trialMode;
+
+    private int NUM_CLUSTERS = 4;
+
+    private Target[] clusterPoints = new CircleTarget[NUM_CLUSTERS];
+
+    // Real UI image
+    Image uiImage;
 
 
     private Mechanism currentMechanism;
@@ -97,6 +107,10 @@ public class AppModel {
 
         this.currentMode = AppMode.MECH_SELECT;
 
+        // set default trial mode to RANDOM_TARGETS
+        this.trialMode = TrialMode.CLUSTER_TARGETS;
+
+
         // Create timer and timertask for fading out mouse trail
         fadeTimer = new Timer();
 
@@ -104,6 +118,9 @@ public class AppModel {
         flickX = 0.0;
         flickY = 0.0;
         trackingFlick = false;
+
+        // get UI image
+        uiImage = new Image("/UnityUI.png");
     }
 
     /**
@@ -171,10 +188,8 @@ public class AppModel {
         fadeTimer = new Timer();
 
         warpTrail.reset();
-        fadeTask = new TimerTask()
-        {
-            public void run()
-            {
+        fadeTask = new TimerTask() {
+            public void run() {
                 // Reduce thickness and opacity until it disappears
                 if (warpTrail.getOpacity() > 0) {
                     warpTrail.fadeStep();
@@ -190,6 +205,13 @@ public class AppModel {
     }
 
     /**
+     * Get the UI image
+     */
+    public Image getUIImage() {
+        return this.uiImage;
+    }
+
+    /**
      * Saves the flick starting coordinates for drawing the flick line
      */
     public void saveFlickStartCoords() {
@@ -200,6 +222,7 @@ public class AppModel {
 
     /**
      * Checks and returns if the min distance has been reached for creating the flick line
+     *
      * @return - True if you reached the min distance, false otherwise
      */
     public boolean reachedMinFlickDistance() {
@@ -209,6 +232,7 @@ public class AppModel {
 
     /**
      * Sets the flag indicating that the flick is being tracked
+     *
      * @param b - Flag that indicates that the flick is being tracked
      */
     public void setFlickTracking(boolean b) {
@@ -217,6 +241,7 @@ public class AppModel {
 
     /**
      * Returns the status of the flick tracking flag
+     *
      * @return
      */
     public boolean trackingFlick() {
@@ -225,6 +250,7 @@ public class AppModel {
 
     /**
      * Method for getting and returning the flick target based on the longer flick line
+     *
      * @param x2 - the start position x coord
      * @param y2 - the start position y coord
      * @param x3 - the end position x coord
@@ -235,10 +261,10 @@ public class AppModel {
         int closestWarp = -1;
         double dist = Double.MAX_VALUE;
         for (int i = 0; i < warps.size(); i++) {
-            if (calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY()) < dist &&
+            if (calculateDistanceToLine(x2, y2, x3, y3, warps.get(i).getX(), warps.get(i).getY()) < dist &&
                     calculateAngle(x3, y3, x2, y2, warps.get(i).getX(), warps.get(i).getY()) < 45.0) {
                 closestWarp = i + 1;
-                dist = calculateDistanceToLine(x2, y2, x3,y3, warps.get(i).getX(), warps.get(i).getY());
+                dist = calculateDistanceToLine(x2, y2, x3, y3, warps.get(i).getX(), warps.get(i).getY());
             }
         }
         //System.out.println("Angle: " + calculateAngle(x3, y3, x2, y2, warps.get(closestWarp - 1).getX(), warps.get(closestWarp - 1).getY()));
@@ -247,6 +273,7 @@ public class AppModel {
 
     /**
      * Method that calculates the distance between two points
+     *
      * @param x1 - 1st point, x coord
      * @param y1 - 1st point, y coord
      * @param x2 - 2nd point, x coord
@@ -264,6 +291,7 @@ public class AppModel {
 
     /**
      * Calculates the distance from a point to a line
+     *
      * @param x1 - 1st point of line, x coord
      * @param y1 - 1st point of line, y coord
      * @param x2 - 2nd point of line, x coord
@@ -283,6 +311,7 @@ public class AppModel {
 
     /**
      * Calculates the angle formed by three points where one point is shared between the two lines
+     *
      * @param x1 - 1st point, x coord
      * @param y1 - 1st point, y coord
      * @param x2 - 2nd point, x coord - Shared point
@@ -309,13 +338,16 @@ public class AppModel {
 
     /**
      * Method for getting the saved flick x coord
+     *
      * @return - Returns the flick x coord
      */
     public double getFlickX() {
         return flickX;
     }
+
     /**
      * Method for getting the saved flick y coord
+     *
      * @return - Returns the flick y coord
      */
     public double getFlickY() {
@@ -377,6 +409,7 @@ public class AppModel {
 
     /**
      * Method for getting list of warps
+     *
      * @return - Returns the WarpLocation ArrayList
      */
     public List<WarpLocation> getWarps() {
@@ -385,6 +418,7 @@ public class AppModel {
 
     /**
      * Returns if warps are toggled to be visible
+     *
      * @return
      */
     public boolean isWarpsVisible() {
@@ -556,6 +590,13 @@ public class AppModel {
     }
 
     /**
+     * Returns the current trial mode
+     */
+    public TrialMode getTrialMode() {
+        return trialMode;
+    }
+
+    /**
      * Records a click event during trials
      */
     public void recordClick(double x, double y) {
@@ -569,17 +610,18 @@ public class AppModel {
                 //...generate 4 average warp locations..
                 sysDefWarpLocations = sysDefGenerateWarpLocations((ArrayList<Point2D>) sysDefClickPositions);
                 //...and initialize normal target selection
-                this.currTarget = random.nextInt(numTargets);
+                this.currTarget = random.nextInt(targets.size());
                 targets.get(currTarget).select();
-                notifySubscribers();}
+                notifySubscribers();
+            }
         }
         // Method for recording a click during trial mode
-        else if (hitTarget((int) x, (int) y)) {
+        else if (targets.size() > 0 && hitTarget((int) x, (int) y)) {
             // Deselect old target
             targets.get(currTarget).deselect();
             // Select new target
             while (currTarget == oldTarget) {
-                this.currTarget = random.nextInt(numTargets);
+                this.currTarget = random.nextInt(targets.size());
             }
             targets.get(currTarget).select();
             numTrials--;
@@ -613,6 +655,23 @@ public class AppModel {
         }
     }
 
+    /**
+     * Sets the models mechanism
+     */
+    public void setTrialMode(KeyCode k) {
+        switch (k) {
+            case DIGIT1 -> {
+                this.trialMode = TrialMode.RANDOM_TARGETS;
+            }
+            case DIGIT2 -> {
+                this.trialMode = TrialMode.CLUSTER_TARGETS;
+            }
+            case DIGIT3 -> {
+                this.trialMode = TrialMode.REAL_UI;
+            }
+        }
+    }
+
     public Mechanism getCurrentMechanism() {
         return this.currentMechanism;
     }
@@ -623,6 +682,9 @@ public class AppModel {
     public void nextMode() {
         switch (this.currentMode) {
             case MECH_SELECT -> {
+                this.currentMode = AppMode.TRIAL_SELECT;
+            }
+            case TRIAL_SELECT -> {
                 this.currentMode = AppMode.PRE_TRIAL;
             }
             case PRE_TRIAL -> {
@@ -633,7 +695,17 @@ public class AppModel {
                 if (getCurrentMechanism() == Mechanism.SYS_DEF) {
                     sysDefTargetSelection = true;
                 }
-                generateRandomTargets();
+                switch (this.trialMode) {
+                    case RANDOM_TARGETS -> {
+                        generateRandomTargets();
+                    }
+                    case REAL_UI -> {
+                        generateUITargets();
+                    }
+                    case CLUSTER_TARGETS -> {
+                        generateClusteredTargets();
+                    }
+                }
             }
             case TRIAL -> {
                 this.currentMode = AppMode.DONE;
@@ -649,6 +721,116 @@ public class AppModel {
         switch (this.currentMode) {
             case PRE_TRIAL -> this.currentMode = AppMode.MECH_SELECT;
         }
+        notifySubscribers();
+    }
+
+    /**
+     * Method for generating clustered targets for a trial
+     */
+    public void generateClusteredTargets() {
+        random = new Random();
+        int min = targetRadius * 6;
+        int maxX = width - min;
+        int maxY = height - min;
+
+
+        // Create 5 random points to cluster targets around
+
+        for (int i = 0; i < NUM_CLUSTERS; i++) {
+            // create locations where targets can be clustered around
+            while (true) {
+                boolean overlap = false;
+                int targetX = random.nextInt(maxX - min + 1) + min;
+                int targetY = random.nextInt(maxY - min + 1) + min;
+                for (Target t : clusterPoints) {
+                    if (t != null && Math.sqrt(Math.pow(targetX - t.getX(), 2) + Math.pow(targetY - t.getY(), 2)) < min * 2) {
+                        overlap = true;
+                        break;
+                    }
+                }
+                if (!overlap) {
+                    CircleTarget newCircleTarget = new CircleTarget(targetX, targetY, min);
+                    clusterPoints[i] = newCircleTarget;
+                    //this.addTarget(newCircleTarget);
+                    break;
+                }
+            }
+        }
+        // created point to cluster around, now create targets around those points
+        min = targetRadius;
+        for (int i = 0; i < numTargets; i++) {
+            // create targets and give it random coords with no overlaps
+            double d = ((CircleTarget) clusterPoints[0]).getRadius();
+            while (true) {
+                boolean overlap = false;
+                int cluster = random.nextInt(NUM_CLUSTERS);
+                double nxt = random.nextGaussian();
+                double targetX = Math.clamp(clusterPoints[cluster].getX() + nxt * d / 2, min, maxX);
+                nxt = random.nextGaussian();
+                //System.out.println(nxt);
+                double targetY = Math.clamp(clusterPoints[cluster].getY() + nxt * d / 2, min, maxY);
+                for (Target t : targets) {
+                    if (Math.sqrt(Math.pow(targetX - t.getX(), 2) + Math.pow(targetY - t.getY(), 2)) < min * 2) {
+                        overlap = true;
+                        break;
+                    }
+                }
+                if (!overlap) {
+                    CircleTarget newCircleTarget = new CircleTarget(targetX, targetY, targetRadius);
+                    this.addTarget(newCircleTarget);
+                    break;
+                }
+            }
+        }
+
+        if (!sysDefTargetSelection) {
+            this.currTarget = random.nextInt(targets.size());
+            targets.get(currTarget).select();
+
+            notifySubscribers();
+        }
+    }
+
+    /**
+     * Generates a selection of targets for the REAl UI trial mode
+     */
+    public void generateUITargets() {
+        // create rectangular targets from UnityUITargets.txt
+        try {
+            // Get the input stream for the file from resources
+            InputStream is = getClass().getClassLoader().getResourceAsStream("UnityUITargets.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Split the line by space to extract four double values
+                String[] parts = line.trim().split("\\s+");
+                if (parts.length != 4) {
+                    // Incorrect format, skip this line
+                    System.out.println("Skipping line - Incorrect number of values: " + line);
+                    continue;
+                }
+
+                // Parse the double values
+                double x = Double.parseDouble(parts[0]);
+                double y = Double.parseDouble(parts[1]);
+                double width = Double.parseDouble(parts[2]);
+                double height = Double.parseDouble(parts[3]);
+
+                // Create RectTarget object and add it to the list
+                RectTarget t = new RectTarget(x, y, width, height);
+                targets.add(t);
+            }
+
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Select a random target to start
+        this.currTarget = random.nextInt(targets.size());
+        targets.get(currTarget).select();
+
         notifySubscribers();
     }
 
@@ -674,15 +856,15 @@ public class AppModel {
                     }
                 }
                 if (!overlap) {
-                    Target newTarget = new Target(targetX, targetY, targetRadius);
-                    this.addTarget(newTarget);
+                    CircleTarget newCircleTarget = new CircleTarget(targetX, targetY, targetRadius);
+                    this.addTarget(newCircleTarget);
                     break;
                 }
             }
         }
 
         if (!sysDefTargetSelection) {
-            this.currTarget = random.nextInt(numTargets);
+            this.currTarget = random.nextInt(targets.size());
             targets.get(currTarget).select();
 
             notifySubscribers();
