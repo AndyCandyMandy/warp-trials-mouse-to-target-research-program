@@ -30,7 +30,7 @@ public class AppController {
     public void handleKeyPressed(KeyEvent keyEvent) {
         switch (model.getCurrentMode()) {
             case MECH_SELECT -> {
-                if (    keyEvent.getCode() == KeyCode.DIGIT0 || keyEvent.getCode() == KeyCode.DIGIT1 ||
+                if (keyEvent.getCode() == KeyCode.DIGIT0 || keyEvent.getCode() == KeyCode.DIGIT1 ||
                         keyEvent.getCode() == KeyCode.DIGIT2 ||
                         keyEvent.getCode() == KeyCode.DIGIT3 || keyEvent.getCode() == KeyCode.DIGIT4) {
                     //Pre-places warp locations on grid if KeyCode is 1
@@ -61,103 +61,89 @@ public class AppController {
                 }
             }
             case TRIAL -> {
-                 if () {
-                /* code for outputting all target information - USED FOR TARGET CREATION
+                /*
+                 code for outputting all target information - USED FOR TARGET CREATION
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     for (Target t : model.getTargets()) {
                         // get string of each created target, and output to console
                         System.out.println(t.toString());
                     }
                 } */
-                 if (keyEvent.getCode() == KeyCode.W && model.getCurrentMechanism() != AppModel.Mechanism.GRID) {
+                if (keyEvent.getCode() == KeyCode.W && model.getCurrentMechanism() != AppModel.Mechanism.GRID) {
                     model.toggleWarps();
                 }
-                 switch (model.getCurrentMechanism()) {
-                     case GRID: {
-                         if (!model.getWarps().isEmpty() && keyEvent.isShiftDown()) {
-                             if (keyEvent.isControlDown()) {
-                                 model.toggleWarps();
-                             }
-                             else if (keyEvent.getCode() == KeyCode.W) {
-                                 warpMouse(model.warpUpGrid(model.getMouseX(), model.getMouseY() - 5));
-                             }
-                             else if (keyEvent.getCode() == KeyCode.S) {
-                                 warpMouse(model.warpDownGrid(model.getMouseX(), model.getMouseY() + 5));
-                             }
-                             else if (keyEvent.getCode() == KeyCode.A) {
-                                 warpMouse(model.warpLeftGrid(model.getMouseX() - 5, model.getMouseY()));
-                             }
-                             else if (keyEvent.getCode() == KeyCode.D) {
-                                 warpMouse(model.warpRightGrid(model.getMouseX() + 5, model.getMouseY()));
-                             }
-                         }
+                switch (model.getCurrentMechanism()) {
+                    case GRID: {
+                        if (!model.getWarps().isEmpty() && keyEvent.isShiftDown()) {
+                            if (keyEvent.isControlDown()) {
+                                model.toggleWarps();
+                            } else if (keyEvent.getCode() == KeyCode.W) {
+                                warpMouse(model.warpUpGrid(model.getMouseX(), model.getMouseY() - 5));
+                            } else if (keyEvent.getCode() == KeyCode.S) {
+                                warpMouse(model.warpDownGrid(model.getMouseX(), model.getMouseY() + 5));
+                            } else if (keyEvent.getCode() == KeyCode.A) {
+                                warpMouse(model.warpLeftGrid(model.getMouseX() - 5, model.getMouseY()));
+                            } else if (keyEvent.getCode() == KeyCode.D) {
+                                warpMouse(model.warpRightGrid(model.getMouseX() + 5, model.getMouseY()));
+                            }
+                        }
 
-                         break;
-                     }
-                     case USR_KEY: {
-                         // Display hotkey bar and warp location(s)
-                         if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
-                             if (!model.getWarps().isEmpty()) {
-                                 // Show/hide warp location(s)
-                                 model.toggleWarps();
-                             }
-                         }
-                         else  {
-                             warp(keyEvent.getCode());
-                         }
-                         break;
-                     }
-                     case SYS_DEF: {
-                         if (model.getWarps().size() != 4 && !model.sysDefTargetSelection) {
-                             for (Point2D warpLocation : model.sysDefWarpLocations) {
-                                 model.addWarp(new WarpLocation(warpLocation.getX(), warpLocation.getY()));
-                             }
-                         }
-                         // Display hotkey bar and warp location(s)
-                         if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
-                             if (!model.getWarps().isEmpty()) {
-                                 // Show/hide warp location(s)
-                                 model.toggleWarps();
-                                 System.out.println(model.isWarpsVisible());
-                             }
-                         }
-                         else {
-                             warp(keyEvent.getCode());
-                         }
-                         break;
-                     }
-                     case FLICK: {
-                         if (keyEvent.getCode() == KeyCode.CONTROL || keyEvent.getCode() == KeyCode.COMMAND) {
-                             model.setFlickTracking(true);
-                             model.saveFlickStartCoords();
-                         }
-                         break;
-                     }
-                 }
+                        break;
+                    }
+                    case USR_KEY: {
+                        // Display hotkey bar and warp location(s)
+                        if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
+                            if (!model.getWarps().isEmpty()) {
+                                // Show/hide warp location(s)
+                                model.toggleWarps();
+                            }
+                        } else {
+                            warp(keyEvent.getCode());
+                        }
+                        break;
+                    }
+                    case SYS_DEF: {
+                        if (model.getWarps().size() != 4 && !model.sysDefTargetSelection) {
+                            for (Point2D warpLocation : model.sysDefWarpLocations) {
+                                model.addWarp(new WarpLocation(warpLocation.getX(), warpLocation.getY()));
+                            }
+                        }
+                        // Display hotkey bar and warp location(s)
+                        if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
+                            if (!model.getWarps().isEmpty()) {
+                                // Show/hide warp location(s)
+                                model.toggleWarps();
+                                System.out.println(model.isWarpsVisible());
+                            }
+                        } else {
+                            warp(keyEvent.getCode());
+                        }
+                        break;
+                    }
+                    case FLICK: {
+                        if (keyEvent.getCode() == KeyCode.CONTROL || keyEvent.getCode() == KeyCode.COMMAND) {
+                            model.setFlickTracking(true);
+                            model.saveFlickStartCoords();
+                        }
+                        break;
+                    }
+                }
             }
             case DONE -> model.nextMode();
         }
     }
 
-    private void warp(KeyCode k){
+    private void warp(KeyCode k) {
         if (k == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
             warpMouse(1);
-        }
-        else if (k == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
+        } else if (k == KeyCode.DIGIT2 && model.getWarps().size() > 1) {
             warpMouse(2);
-        }
-        else if (k == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
+        } else if (k == KeyCode.DIGIT3 && model.getWarps().size() > 2) {
             warpMouse(3);
-        }
-        else if (k == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
+        } else if (k == KeyCode.DIGIT4 && model.getWarps().size() > 3) {
             warpMouse(4);
         }
     }
-
-
-
-
-
 
 
     public void warpMouse(int locationNumber) {
@@ -185,8 +171,7 @@ public class AppController {
             model.setMouseY(warpY);
             // Method to start fade timer
             model.startTrailFadeTimer();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Could not move your mouse successfully");
         }
     }
@@ -206,6 +191,7 @@ public class AppController {
     public void setModel(AppModel newModel) {
         model = newModel;
     }
+
     public void setCanvas(Canvas canvas) {
         this.canvas = canvas;
     }
@@ -232,19 +218,18 @@ public class AppController {
             case TRIAL -> {
                 // Record clicks and errors
                 if (event.getButton() == MouseButton.PRIMARY) {
+                    model.recordClick(event.getX(), event.getY());
                     // Check whether user made error
                     if (!model.hitTarget(event.getX(), event.getY())) {
                         model.addToErrorCount();
                     }
                     // Check whether user made correct selection
                     else {
-                        model.recordClick(event.getX(), event.getY());
-
                         // Print results to console
                         System.out.println("Time to select (ms):      " + model.getSelectionTime() + "\n" +
-                                            "Number of click errors:   " + model.getErrorCount() + "\n" +
-                                            "Number of warps:          " + model.getWarpCount() + "\n" +
-                                            "Current Mechanism:        " + model.getCurrentMechanism() + "\n");
+                                "Number of click errors:   " + model.getErrorCount() + "\n" +
+                                "Number of warps:          " + model.getWarpCount() + "\n" +
+                                "Current Mechanism:        " + model.getCurrentMechanism() + "\n");
 
                         // Reset the timer for the next selection
                         model.getElapsedTime();
@@ -258,16 +243,13 @@ public class AppController {
 
                         if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
                             model.addWarp(new WarpLocation(event.getX(), event.getY()));
-                        }
-                        else if (model.getCurrentMechanism() == AppModel.Mechanism.USR_KEY) {
+                        } else if (model.getCurrentMechanism() == AppModel.Mechanism.USR_KEY) {
                             model.addWarp(new WarpLocation(event.getX(), event.getY()));
-                        }
-                        else if (model.getCurrentMechanism() == AppModel.Mechanism.FLICK) {
+                        } else if (model.getCurrentMechanism() == AppModel.Mechanism.FLICK) {
                             model.addWarp(new WarpLocation(event.getX(), event.getY()));
                         }
 
-                    }
-                    else {
+                    } else {
                         System.out.println("You have reached your warp capacity");
                     }
                 }
@@ -329,3 +311,4 @@ public class AppController {
         }
     }
 }
+

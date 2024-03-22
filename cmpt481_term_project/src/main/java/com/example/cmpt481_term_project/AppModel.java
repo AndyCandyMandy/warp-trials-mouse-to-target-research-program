@@ -169,7 +169,7 @@ public class AppModel {
      * Returns the error count
      */
     public int getErrorCount() {
-       return numOfErrors;
+        return numOfErrors;
     }
 
     /**
@@ -459,7 +459,7 @@ public class AppModel {
         for (int i = 1; i <= this.gridPoints.size(); i++) {
             double len = Math.sqrt(Math.pow(x - this.gridPoints.get(i - 1).getX(), 2) + Math.pow(y - this.gridPoints.get(i - 1).getY(), 2));
             if (this.gridPoints.get(i - 1).getY() <= y && this.gridPoints.get(i - 1).getY() >= adjacentY) {
-                adjacentY = this.gridPoints.get(i -1).getY();
+                adjacentY = this.gridPoints.get(i - 1).getY();
 
 
                 if (y != this.gridPoints.get(i - 1).getY() && len < shortestX) {
@@ -480,7 +480,7 @@ public class AppModel {
         for (int i = 1; i <= this.gridPoints.size(); i++) {
             double len = Math.sqrt(Math.pow(x - this.gridPoints.get(i - 1).getX(), 2) + Math.pow(y - this.gridPoints.get(i - 1).getY(), 2));
             if (this.gridPoints.get(i - 1).getY() >= y && this.gridPoints.get(i - 1).getY() <= adjacentY) {
-                adjacentY = this.gridPoints.get(i -1).getY();
+                adjacentY = this.gridPoints.get(i - 1).getY();
 
 
                 if (y != this.gridPoints.get(i - 1).getY() && len < shortestX) {
@@ -501,7 +501,7 @@ public class AppModel {
         for (int i = 1; i <= this.gridPoints.size(); i++) {
             double len = Math.sqrt(Math.pow(x - this.gridPoints.get(i - 1).getX(), 2) + Math.pow(y - this.gridPoints.get(i - 1).getY(), 2));
             if (this.gridPoints.get(i - 1).getX() <= x && this.gridPoints.get(i - 1).getX() >= adjacentX) {
-                adjacentX = this.gridPoints.get(i -1).getX();
+                adjacentX = this.gridPoints.get(i - 1).getX();
 
 
                 if (x != this.gridPoints.get(i - 1).getX() && len <= shortestY) {
@@ -522,7 +522,7 @@ public class AppModel {
         for (int i = 1; i <= this.gridPoints.size(); i++) {
             double len = Math.sqrt(Math.pow(x - this.gridPoints.get(i - 1).getX(), 2) + Math.pow(y - this.gridPoints.get(i - 1).getY(), 2));
             if (this.gridPoints.get(i - 1).getX() >= x && this.gridPoints.get(i - 1).getX() <= adjacentX) {
-                adjacentX = this.gridPoints.get(i -1).getX();
+                adjacentX = this.gridPoints.get(i - 1).getX();
 
 
                 if (y != this.gridPoints.get(i - 1).getX() && len < shortestY) {
@@ -783,12 +783,12 @@ public class AppModel {
             }
         }
 
+        // Select a random target to start if not system defined
         if (!sysDefTargetSelection) {
             this.currTarget = random.nextInt(targets.size());
             targets.get(currTarget).select();
-
-            notifySubscribers();
         }
+        notifySubscribers();
     }
 
     /**
@@ -827,10 +827,11 @@ public class AppModel {
             e.printStackTrace();
         }
 
-        // Select a random target to start
-        this.currTarget = random.nextInt(targets.size());
-        targets.get(currTarget).select();
-
+        // Select a random target to start if not system defined
+        if (!sysDefTargetSelection) {
+            this.currTarget = random.nextInt(targets.size());
+            targets.get(currTarget).select();
+        }
         notifySubscribers();
     }
 
@@ -866,9 +867,8 @@ public class AppModel {
         if (!sysDefTargetSelection) {
             this.currTarget = random.nextInt(targets.size());
             targets.get(currTarget).select();
-
-            notifySubscribers();
         }
+        notifySubscribers();
     }
 
     /**
@@ -906,7 +906,8 @@ public class AppModel {
 
     /**
      * Helper function for Mechanism-3 sysDefGenerateWarpLocations function
-     */    private ArrayList<ArrayList<Point2D>> assignToClusters(ArrayList<Point2D> data, ArrayList<Point2D> centroids) {
+     */
+    private ArrayList<ArrayList<Point2D>> assignToClusters(ArrayList<Point2D> data, ArrayList<Point2D> centroids) {
         ArrayList<ArrayList<Point2D>> clusters = new ArrayList<>();
         for (int i = 0; i < centroids.size(); i++) {
             clusters.add(new ArrayList<>());
@@ -929,7 +930,8 @@ public class AppModel {
 
     /**
      * Helper function for Mechanism-3 sysDefGenerateWarpLocations function
-     */    private ArrayList<Point2D> recalculateCentroids(ArrayList<ArrayList<Point2D>> clusters) {
+     */
+    private ArrayList<Point2D> recalculateCentroids(ArrayList<ArrayList<Point2D>> clusters) {
         ArrayList<Point2D> newCentroids = new ArrayList<>();
         for (ArrayList<Point2D> cluster : clusters) {
             if (cluster.isEmpty()) {
