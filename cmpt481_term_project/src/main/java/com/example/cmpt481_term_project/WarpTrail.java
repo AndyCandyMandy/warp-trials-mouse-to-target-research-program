@@ -8,6 +8,9 @@ package com.example.cmpt481_term_project;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 
 public class WarpTrail {
     private double endPointX, endPointY, mouseX, mouseY, opacity, thickness;
@@ -15,6 +18,9 @@ public class WarpTrail {
     private final double defaultOpacity = 1.0;
     private final double thicknessFadeStep = 0.09;
     private final double opacityFadeStep = 0.03;
+
+    private Color startTrailColor = new Color(1.0, 0, 1.0, 1.0);
+    private Color endTrailColor = new Color(0, 0, 0, 0);
 
     /**
      * Constructor for the warp trail
@@ -71,7 +77,9 @@ public class WarpTrail {
     public void draw(GraphicsContext gc) {
         double oldStroke = gc.getLineWidth();
         gc.setLineWidth(thickness);
-        gc.setStroke(new Color(0,0,0,opacity));
+        //gc.setStroke(new Color(0,0,0,opacity));
+        LinearGradient linearGradient = new LinearGradient(this.endPointX, this.endPointY, this.mouseX, this.mouseY, false, CycleMethod.REFLECT, new Stop(0,startTrailColor),new Stop(1,endTrailColor));
+        gc.setStroke(linearGradient);
         gc.strokeLine(this.endPointX, this.endPointY, this.mouseX, this.mouseY);
         gc.setLineWidth(oldStroke);
     }

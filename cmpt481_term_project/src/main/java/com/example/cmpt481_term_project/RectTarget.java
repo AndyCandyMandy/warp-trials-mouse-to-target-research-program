@@ -40,7 +40,7 @@ public class RectTarget implements Target{
     public void drawTarget(GraphicsContext gc) {
         double s = gc.getLineWidth();
         if (selected) {
-            gc.setFill(color(1, 1, 0, 0.4));
+            gc.setFill(color(1, 0, 1, 0.4));
         } else {
             gc.setFill(color(1, 1, 1, 0));
         }
