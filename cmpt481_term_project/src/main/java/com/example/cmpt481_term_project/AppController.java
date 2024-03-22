@@ -218,7 +218,6 @@ public class AppController {
             case TRIAL -> {
                 // Record clicks and errors
                 if (event.getButton() == MouseButton.PRIMARY) {
-                    model.recordClick(event.getX(), event.getY());
                     // Check whether user made error
                     if (!model.hitTarget(event.getX(), event.getY())) {
                         model.addToErrorCount();
@@ -235,7 +234,11 @@ public class AppController {
                         model.getElapsedTime();
                         // Reset number of errors
                         model.resetErrorCount();
+
                     }
+                    // Record click, move to next target1
+                    model.recordClick(event.getX(), event.getY());
+
                 } else if (event.getButton() == MouseButton.SECONDARY && model.getCurrentMechanism() != AppModel.Mechanism.SYS_DEF) {
                     // The capacity for warp locations is locked 4 areas. This check verifies the current number
                     if (model.getWarps().size() != 4) {
