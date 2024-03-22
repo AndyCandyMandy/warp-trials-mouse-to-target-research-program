@@ -30,6 +30,13 @@ public class AppController {
                 if (    keyEvent.getCode() == KeyCode.DIGIT0 || keyEvent.getCode() == KeyCode.DIGIT1 ||
                         keyEvent.getCode() == KeyCode.DIGIT2 ||
                         keyEvent.getCode() == KeyCode.DIGIT3 || keyEvent.getCode() == KeyCode.DIGIT4) {
+                    //Pre-places warp locations on grid if KeyCode is 1
+                    if (keyEvent.getCode() == KeyCode.DIGIT1) {
+                        for (GridPointer point : model.getGridList()) {
+                            model.addWarp(new WarpLocation(point.getX(), point.getY()));
+                        }
+                    }
+
                     model.setMechanism(keyEvent.getCode());
                     model.nextMode();
                 }
@@ -44,16 +51,31 @@ public class AppController {
                 }
             }
             case TRIAL -> {
-                 if (keyEvent.getCode() == KeyCode.W) {
-                     // Warp the user's cursor
-                     model.toggleWarps();
-
-                     // Add to number of warps
-                     model.addToWarpCount();
+                 if (keyEvent.getCode() == KeyCode.W && model.getCurrentMechanism() != AppModel.Mechanism.GRID) {
+                    model.toggleWarps();
                 }
                  switch (model.getCurrentMechanism()) {
-                     case NO_MECH:
-                     case GRID:
+                     case GRID: {
+                         if (!model.getWarps().isEmpty() && keyEvent.isShiftDown()) {
+                             if (keyEvent.isControlDown()) {
+                                 model.toggleWarps();
+                             }
+                             else if (keyEvent.getCode() == KeyCode.UP) {
+                                 warpMouse(model.warpUpGrid(model.getMouseX(), model.getMouseY()));
+                             }
+                             else if (keyEvent.getCode() == KeyCode.DOWN) {
+                                 warpMouse(model.warpDownGrid(model.getMouseX(), model.getMouseY() + 1));
+                             }
+                             else if (keyEvent.getCode() == KeyCode.LEFT) {
+                                 warpMouse(model.warpLeftGrid(model.getMouseX() - 1, model.getMouseY()));
+                             }
+                             else if (keyEvent.getCode() == KeyCode.RIGHT) {
+                                 warpMouse(model.warpRightGrid(model.getMouseX() + 1, model.getMouseY()));
+                             }
+                         }
+
+                         break;
+                     }
                      case USR_KEY: {
                          // Display hotkey bar and warp location(s)
                          if (keyEvent.isControlDown() && keyEvent.isShiftDown()) {
@@ -121,6 +143,11 @@ public class AppController {
 
 
     public void warpMouse(int locationNumber) {
+        // Patch a tiny bug. Will delete later
+        if (locationNumber == 0) {
+            return;
+        }
+
         // Get the warp location in the list
         double warpX = model.getWarps().get(locationNumber - 1).getX();
         double warpY = model.getWarps().get(locationNumber - 1).getY();
@@ -150,6 +177,7 @@ public class AppController {
      * Empty constructor
      */
     public AppController() {
+
     }
 
     /**
@@ -206,14 +234,9 @@ public class AppController {
                 } else if (event.getButton() == MouseButton.SECONDARY && model.getCurrentMechanism() != AppModel.Mechanism.SYS_DEF) {
                     // The capacity for warp locations is locked 4 areas. This check verifies the current number
                     if (model.getWarps().size() != 4) {
-                        // Ensures that the user can't place warps while the grids aren't visible
-                        if (model.getCurrentMechanism() == AppModel.Mechanism.GRID && model.isWarpsVisible()) {
-                            GridPointer point = model.findGridPoint(event.getX(), event.getY());
-                            if (point != null) {
-                                model.addWarp(new WarpLocation(point.getX(), point.getY()));
-                            }
-                        }
-                        else if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
+
+
+                        if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
                             model.addWarp(new WarpLocation(event.getX(), event.getY()));
                         }
                         else if (model.getCurrentMechanism() == AppModel.Mechanism.USR_KEY) {
@@ -222,6 +245,7 @@ public class AppController {
                         else if (model.getCurrentMechanism() == AppModel.Mechanism.FLICK) {
                             model.addWarp(new WarpLocation(event.getX(), event.getY()));
                         }
+
                     }
                     else {
                         System.out.println("You have reached your warp capacity");

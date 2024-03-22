@@ -126,12 +126,11 @@ public class AppView extends StackPane implements AppModelListener {
                     targetNumber++;
                 }
 
-
                 if (model.isWarpsVisible()) {
 
                     // draw grid if in "GRID" mechanism state
                     if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
-                        drawGrid((int) getHeight()/100,(int) getWidth()/100);
+                        drawGrid( model.getGridCollumn(), model.getGridRow());
                     }
                     // draw warp locations
                     int warpNumber = 1;
