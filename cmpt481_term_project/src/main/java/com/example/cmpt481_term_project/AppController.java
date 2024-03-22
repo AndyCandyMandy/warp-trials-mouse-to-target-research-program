@@ -36,6 +36,13 @@ public class AppController {
                     model.nextMode();
                 }
             }
+            case TRIAL_SELECT -> {
+                if (keyEvent.getCode() == KeyCode.DIGIT1 || keyEvent.getCode() == KeyCode.DIGIT2 ||
+                        keyEvent.getCode() == KeyCode.DIGIT3) {
+                    model.setTrialMode(keyEvent.getCode());
+                    model.nextMode();
+                }
+            }
             case PRE_TRIAL -> {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     model.nextMode();

@@ -42,7 +42,7 @@ public class AppModel {
     private boolean trackingFlick;
 
 
-    public enum AppMode {MECH_SELECT, PRE_TRIAL, TRIAL, DONE}
+    public enum AppMode {MECH_SELECT, TRIAL_SELECT, PRE_TRIAL, TRIAL, DONE}
 
     private AppMode currentMode;
 
@@ -488,6 +488,23 @@ public class AppModel {
         }
     }
 
+    /**
+     * Sets the models mechanism
+     */
+    public void setTrialMode(KeyCode k) {
+        switch (k) {
+            case DIGIT1 -> {
+                this.trialMode = TrialMode.RANDOM_TARGETS;
+            }
+            case DIGIT2 -> {
+                this.trialMode = TrialMode.CLUSTER_TARGETS;
+            }
+            case DIGIT3 -> {
+                this.trialMode = TrialMode.REAL_UI;
+            }
+        }
+    }
+
     public Mechanism getCurrentMechanism() {
         return this.currentMechanism;
     }
@@ -498,6 +515,9 @@ public class AppModel {
     public void nextMode() {
         switch (this.currentMode) {
             case MECH_SELECT -> {
+                this.currentMode = AppMode.TRIAL_SELECT;
+            }
+            case TRIAL_SELECT -> {
                 this.currentMode = AppMode.PRE_TRIAL;
             }
             case PRE_TRIAL -> {

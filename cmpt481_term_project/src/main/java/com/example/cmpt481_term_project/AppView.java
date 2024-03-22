@@ -29,7 +29,6 @@ public class AppView extends StackPane implements AppModelListener {
     public AppView() {
         myCanvas = new Canvas(1500, 900);
         gc = myCanvas.getGraphicsContext2D();
-
         this.getChildren().add(myCanvas);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -46,6 +45,12 @@ public class AppView extends StackPane implements AppModelListener {
                 // clear canvas
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
                 gc.fillText("Please select a mechanism [1-4].", myCanvas.getWidth() / 2, 50);
+            }
+            case TRIAL_SELECT -> {
+                // clear canvas
+                gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+                gc.fillText("Please select a trial type [1-3].", myCanvas.getWidth() / 2, 50);
+                gc.fillText("1 for Random, 2 for clusters, 3 for real UI", myCanvas.getWidth() / 2, 80);
             }
             case PRE_TRIAL -> {
                 // clear canvas
