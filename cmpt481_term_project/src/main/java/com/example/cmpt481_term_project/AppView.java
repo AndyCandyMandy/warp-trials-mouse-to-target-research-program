@@ -51,7 +51,16 @@ public class AppView extends StackPane implements AppModelListener {
                         In order to complete a trial, you must click on the red-highlighted target
                         which will be prompted on your screen.
 
-                        To begin, please select a mechanism by pressing [0-4].""",
+                        To begin, please select a mechanism by pressing [0-4].
+                        
+                        
+                        
+                        [0] Standard Trial (No Mechanism)
+                        [1] Grid Warping Trial 
+                        [2] User-Defined Warping Trial 
+                        [3] System-Defined Warping Trial 
+                        [4] Flick Warping Trial
+                        """,
                         myCanvas.getWidth() / 2, 50);
             }
             case TRIAL_SELECT -> {
@@ -77,8 +86,9 @@ public class AppView extends StackPane implements AppModelListener {
                     gc.fillText("""
                         Mechanism 1 - Grid Warping:
                         
-                        In this trial, you can bring up a grid on the screen by pressing the 'W' key. Mark 4 warping locations of your choosing.
-                        The grid can be toggled ON or OFF by pressing the 'W' key. The system will alert you once the trial is finished.
+                        In this trial, you can bring up a grid on the screen by pressing the 'Shift' key and 'CTRL" key. 
+                        Warping is controlled through utilizing the WASD keys while holding "Shift" to navigate a pre-determined grid. 
+                        The system will alert you once the trial is finished.
                         
                         Press ENTER to start.""",
                         myCanvas.getWidth() / 2, 50);
