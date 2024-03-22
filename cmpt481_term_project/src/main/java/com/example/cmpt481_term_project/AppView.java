@@ -67,7 +67,9 @@ public class AppView extends StackPane implements AppModelListener {
                 // clear canvas
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
                 gc.fillText("Please select a trial type [1-3].", myCanvas.getWidth() / 2, 50);
-                gc.fillText("1 for Random, 2 for clusters, 3 for real UI", myCanvas.getWidth() / 2, 80);
+                gc.fillText("[1] random target placement, [2] clustered targets, [3] real world UI",
+                        myCanvas.getWidth() / 2,
+                        80);
             }
             case PRE_TRIAL -> {
                 // clear canvas
