@@ -27,7 +27,8 @@ public class AppController {
     public void handleKeyPressed(KeyEvent keyEvent) {
         switch (model.getCurrentMode()) {
             case MECH_SELECT -> {
-                if (keyEvent.getCode() == KeyCode.DIGIT1 || keyEvent.getCode() == KeyCode.DIGIT2 ||
+                if (    keyEvent.getCode() == KeyCode.DIGIT0 || keyEvent.getCode() == KeyCode.DIGIT1 ||
+                        keyEvent.getCode() == KeyCode.DIGIT2 ||
                         keyEvent.getCode() == KeyCode.DIGIT3 || keyEvent.getCode() == KeyCode.DIGIT4) {
                     model.setMechanism(keyEvent.getCode());
                     model.nextMode();
@@ -37,12 +38,21 @@ public class AppController {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     model.nextMode();
                 }
+                if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                    System.out.println("Escape pressed");
+                    model.returnToMechanismSelect();
+                }
             }
             case TRIAL -> {
                  if (keyEvent.getCode() == KeyCode.W) {
-                    model.toggleWarps();
+                     // Warp the user's cursor
+                     model.toggleWarps();
+
+                     // Add to number of warps
+                     model.addToWarpCount();
                 }
                  switch (model.getCurrentMechanism()) {
+                     case NO_MECH:
                      case GRID:
                      case USR_KEY: {
                          // Display hotkey bar and warp location(s)
@@ -50,7 +60,6 @@ public class AppController {
                              if (!model.getWarps().isEmpty()) {
                                  // Show/hide warp location(s)
                                  model.toggleWarps();
-                                 System.out.println(model.isWarpsVisible());
                              }
                          }
                          else  {
@@ -173,8 +182,27 @@ public class AppController {
     public void handleReleased(MouseEvent event) {
         switch (model.getCurrentMode()) {
             case TRIAL -> {
+                // Record clicks and errors
                 if (event.getButton() == MouseButton.PRIMARY) {
-                    model.recordClick(event.getX(), event.getY());
+                    // Check whether user made error
+                    if (!model.hitTarget(event.getX(), event.getY())) {
+                        model.addToErrorCount();
+                    }
+                    // Check whether user made correct selection
+                    else {
+                        model.recordClick(event.getX(), event.getY());
+
+                        // Print results to console
+                        System.out.println("Time to select (ms):      " + model.getSelectionTime() + "\n" +
+                                            "Number of click errors:   " + model.getErrorCount() + "\n" +
+                                            "Number of warps:          " + model.getWarpCount() + "\n" +
+                                            "Current Mechanism:        " + model.getCurrentMechanism() + "\n");
+
+                        // Reset the timer for the next selection
+                        model.getElapsedTime();
+                        // Reset number of errors
+                        model.resetErrorCount();
+                    }
                 } else if (event.getButton() == MouseButton.SECONDARY && model.getCurrentMechanism() != AppModel.Mechanism.SYS_DEF) {
                     // The capacity for warp locations is locked 4 areas. This check verifies the current number
                     if (model.getWarps().size() != 4) {

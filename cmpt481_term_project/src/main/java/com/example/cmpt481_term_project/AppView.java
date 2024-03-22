@@ -45,18 +45,74 @@ public class AppView extends StackPane implements AppModelListener {
             case MECH_SELECT -> {
                 // clear canvas
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
-                gc.fillText("Please select a mechanism [1-4].", myCanvas.getWidth() / 2, 50);
+                gc.fillText("""
+                        Welcome to Warp Trials! In this program, you will go through a series of trials,
+                        each with their own unique mechanism for completing the trial differently.
+                        
+                        In order to complete a trial, you must click on the red-highlighted target
+                        which will be prompted on your screen.
+
+                        To begin, please select a mechanism by pressing [0-4].""",
+                        myCanvas.getWidth() / 2, 50);
             }
             case PRE_TRIAL -> {
                 // clear canvas
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
-                if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
-                    gc.fillText("Click 20 targets randomly on the screen (you can even repeat the same targets).", myCanvas.getWidth() / 2, 50);
-                    gc.fillText("Once done, you will be presented with highlighted targets to click.", myCanvas.getWidth() / 2, 80);
-                    gc.fillText("Click on the targets, press ENTER to start.", myCanvas.getWidth() / 2, 110);
+                if (model.getCurrentMechanism() == AppModel.Mechanism.NO_MECH) {
+                    gc.fillText("""
+                        Mechanism 0 - Standard Trial:
+                        
+                        Complete a trial by clicking on the red highlighted target.
+                        The system will alert you once the trial is finished.
+                        
+                        Press ENTER to start.""",
+                        myCanvas.getWidth() / 2, 50);
                 }
-                else {
-                    gc.fillText("Click on the targets, press ENTER to start.", myCanvas.getWidth() / 2, 50);
+                if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
+                    gc.fillText("""
+                        Mechanism 1 - Grid Warping:
+                        
+                        In this trial, you can bring up a grid on the screen by pressing the 'W' key. Mark 4 warping locations of your choosing.
+                        The grid can be toggled ON or OFF by pressing the 'W' key. The system will alert you once the trial is finished.
+                        
+                        Press ENTER to start.""",
+                        myCanvas.getWidth() / 2, 50);
+                }
+                if (model.getCurrentMechanism() == AppModel.Mechanism.USR_KEY) {
+                    gc.fillText("""
+                        Mechanism 2 - User-Defined Warping:
+                        
+                        In this trial, you can mark any 4 locations on the canvas of your choose to instantly warp your mouse cursor to.
+                        The spots can be toggled ON or OFF by pressing the 'W' key or SHIFT + CONTROL keys.
+                        The system will alert you once the trial is finished.
+                        
+                        Press ENTER to start.""",
+                        myCanvas.getWidth() / 2, 50);
+                }
+                if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
+                    gc.fillText("""
+                        Mechanism 3 - System-Defined Warping:
+                        
+                        Click 20 areas on the screen of your choosing (you can even repeat the same targets). The system will then
+                        determine your 4 most clicked locations based on the areas of your 20 clicks.
+                        Once done, you will be presented with highlighted targets to click.
+                        The system will alert you once the trial is finished.
+                        
+                        Press ENTER to start.""",
+                        myCanvas.getWidth() / 2, 50);
+                }
+                if (model.getCurrentMechanism() == AppModel.Mechanism.FLICK) {
+                    gc.fillText("""
+                        Mechanism 4 - Flick Warping:
+                        
+                        In this trial, you can mark any 4 locations on the canvas of your choose to instantly warp your mouse cursor to.
+                        The spots can be toggled ON or OFF by pressing the 'W' key or SHIFT + CONTROL keys.
+                        
+                        In order to warp, hold the CONTROL key (COMMAND key on Mac) and move your cursor in the direction of the warp location.
+                        The system will alert you once the trial is finished.
+                        
+                        Press ENTER to start.""",
+                        myCanvas.getWidth() / 2, 50);
                 }
             }
             case TRIAL -> {
