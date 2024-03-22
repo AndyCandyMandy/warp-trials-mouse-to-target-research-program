@@ -81,7 +81,9 @@ public class AppView extends StackPane implements AppModelListener {
                         Complete a trial by clicking on the red highlighted target.
                         The system will alert you once the trial is finished.
                         
-                        Press ENTER to start.""",
+                        Press ENTER to start.
+                        
+                        Press ESC to return to the main menu""",
                         myCanvas.getWidth() / 2, 50);
                 }
                 if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
@@ -92,7 +94,9 @@ public class AppView extends StackPane implements AppModelListener {
                         Warping is controlled through utilizing the WASD keys while holding "Shift" to navigate a pre-determined grid. 
                         The system will alert you once the trial is finished.
                         
-                        Press ENTER to start.""",
+                        Press ENTER to start.
+                        
+                        Press ESC to return to the main menu""",
                         myCanvas.getWidth() / 2, 50);
                 }
                 if (model.getCurrentMechanism() == AppModel.Mechanism.USR_KEY) {
@@ -103,7 +107,9 @@ public class AppView extends StackPane implements AppModelListener {
                         The spots can be toggled ON or OFF by pressing the 'W' key or SHIFT + CONTROL keys.
                         The system will alert you once the trial is finished.
                         
-                        Press ENTER to start.""",
+                        Press ENTER to start.
+                        
+                        Press ESC to return to the main menu""",
                         myCanvas.getWidth() / 2, 50);
                 }
                 if (model.getCurrentMechanism() == AppModel.Mechanism.SYS_DEF) {
@@ -115,7 +121,9 @@ public class AppView extends StackPane implements AppModelListener {
                         Once done, you will be presented with highlighted targets to click.
                         The system will alert you once the trial is finished.
                         
-                        Press ENTER to start.""",
+                        Press ENTER to start.
+                        
+                        Press ESC to return to the main menu""",
                         myCanvas.getWidth() / 2, 50);
                 }
                 if (model.getCurrentMechanism() == AppModel.Mechanism.FLICK) {
@@ -128,7 +136,9 @@ public class AppView extends StackPane implements AppModelListener {
                         In order to warp, hold the CONTROL key (COMMAND key on Mac) and move your cursor in the direction of the warp location.
                         The system will alert you once the trial is finished.
                         
-                        Press ENTER to start.""",
+                        Press ENTER to start.
+                        
+                        Press ESC to return to the main menu""",
                         myCanvas.getWidth() / 2, 50);
                 }
             }
