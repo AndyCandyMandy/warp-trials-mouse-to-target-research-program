@@ -38,8 +38,8 @@ public class AppModel {
 
     // Grid-defined Warp Mechanism Attributes
     private List<GridPointer> gridPoints;
-    private int gridRow = 5;
-    private int gridCollumn = 4;
+    private int gridRow = 5; // Default 5
+    private int gridCollumn = 4; // Default 4
 
 
     // System-defined Warp Mechanism attributes
@@ -440,12 +440,13 @@ public class AppModel {
     public void setUpGridPoints(double x, double y) {
         double xPos = this.width / x;
         double yPos = this.height / y;
-        for (int i = 1; i <= x - 2; i++) {
-            for (int j = 1; j <= y; j++) {
+
+        for (int i = 1; i <= y - 1; i++) {
+            for (int j = 1; j <= x - 1; j++) {
                 this.gridPoints.add(new GridPointer(xPos, yPos));
-                //System.out.println("[ " + xPos + ", " + yPos + " ]");
                 xPos += this.width / x;
             }
+
             xPos = this.width / x;
             yPos += this.height / y;
         }
