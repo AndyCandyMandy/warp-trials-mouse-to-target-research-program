@@ -171,6 +171,7 @@ public class AppController {
             model.setMouseY(warpY);
             // Method to start fade timer
             model.startTrailFadeTimer();
+            model.addToWarpCount();
         } catch (Exception e) {
             System.out.println("Could not move your mouse successfully");
         }
@@ -234,6 +235,7 @@ public class AppController {
                         model.getElapsedTime();
                         // Reset number of errors
                         model.resetErrorCount();
+                        model.resetWarpCount();
 
                     }
                     // Record click, move to next target1
