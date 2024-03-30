@@ -821,8 +821,11 @@ public class AppModel {
                 double width = Double.parseDouble(parts[2]);
                 double height = Double.parseDouble(parts[3]);
 
+                double horizRatio = this.width/1500.0;
+                double vertRatio = this.height/900.0;
+
                 // Create RectTarget object and add it to the list
-                RectTarget t = new RectTarget(x, y, width, height);
+                RectTarget t = new RectTarget(x * horizRatio, y * vertRatio, width * horizRatio, height * vertRatio);
                 targets.add(t);
             }
 
