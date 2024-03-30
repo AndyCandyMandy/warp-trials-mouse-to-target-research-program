@@ -33,13 +33,6 @@ public class AppController {
                 if (keyEvent.getCode() == KeyCode.DIGIT0 || keyEvent.getCode() == KeyCode.DIGIT1 ||
                         keyEvent.getCode() == KeyCode.DIGIT2 ||
                         keyEvent.getCode() == KeyCode.DIGIT3 || keyEvent.getCode() == KeyCode.DIGIT4) {
-                    //Pre-places warp locations on grid if KeyCode is 1
-                    if (keyEvent.getCode() == KeyCode.DIGIT1) {
-                        for (GridPointer point : model.getGridList()) {
-                            model.addWarp(new WarpLocation(point.getX(), point.getY()));
-                        }
-                    }
-
                     model.setMechanism(keyEvent.getCode());
                     model.nextMode();
                 }
@@ -53,6 +46,11 @@ public class AppController {
             }
             case PRE_TRIAL -> {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
+                    if (model.getCurrentMechanism() == AppModel.Mechanism.GRID) {
+                        for (GridPointer point : model.getGridList()) {
+                            model.addWarp(new WarpLocation(point.getX(), point.getY()));
+                        }
+                    }
                     model.nextMode();
                 }
                 if (keyEvent.getCode() == KeyCode.ESCAPE) {

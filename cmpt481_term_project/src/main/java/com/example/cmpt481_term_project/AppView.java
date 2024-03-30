@@ -44,6 +44,7 @@ public class AppView extends StackPane implements AppModelListener {
             case MECH_SELECT -> {
                 // clear canvas
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+                gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
                 gc.fillText("""
                         Welcome to Warp Trials! In this program, you will go through a series of trials,
                         each with their own unique mechanism for completing the trial differently.
@@ -66,6 +67,7 @@ public class AppView extends StackPane implements AppModelListener {
             case TRIAL_SELECT -> {
                 // clear canvas
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+                gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
                 gc.fillText("Please select a trial type [1-3].", myCanvas.getWidth() / 2, 50);
                 gc.fillText("[1] random target placement, [2] clustered targets, [3] real world UI",
                         myCanvas.getWidth() / 2,
@@ -74,6 +76,7 @@ public class AppView extends StackPane implements AppModelListener {
             case PRE_TRIAL -> {
                 // clear canvas
                 gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+                gc.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
                 if (model.getCurrentMechanism() == AppModel.Mechanism.NO_MECH) {
                     gc.fillText("""
                         Mechanism 0 - Standard Trial:

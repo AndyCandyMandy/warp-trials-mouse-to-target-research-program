@@ -712,7 +712,17 @@ public class AppModel {
                 }
             }
             case TRIAL -> {
-                this.currentMode = AppMode.DONE;
+                this.numBlocks = this.numBlocks - 1;
+                if (this.numBlocks == 0) {
+                    this.currentMode = AppMode.DONE;
+                } else {
+                    this.numTrials = 20;
+                    sysDefClickPositions = new ArrayList<>();
+                    sysDefWarpLocations = new ArrayList<>();
+                    warps = new ArrayList<>();
+                    this.targets = new ArrayList<>();
+                    this.currentMode = AppMode.PRE_TRIAL;
+                }
             }
             case DONE -> {
                 System.exit(1);
