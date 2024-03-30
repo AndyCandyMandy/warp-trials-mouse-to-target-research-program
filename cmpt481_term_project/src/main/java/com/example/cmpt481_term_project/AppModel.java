@@ -27,6 +27,7 @@ public class AppModel {
     private int width;
     private int numTargets;
     private int numTrials;
+    private int numBlocks;
     private int targetRadius;
     private int currTarget;
 
@@ -93,7 +94,8 @@ public class AppModel {
         this.height = h;
         this.targetRadius = 30;
         this.numTargets = 50;
-        this.numTrials = 10;
+        this.numBlocks = 3;
+        this.numTrials = 20;
         this.showWarps = false;
         this.numOfWarps = 0;
 
@@ -195,6 +197,7 @@ public class AppModel {
                     warpTrail.fadeStep();
                     notifySubscribers();
                 } else {
+                    warpTrail.setDrawn(false);
                     this.cancel();
                 }
             }

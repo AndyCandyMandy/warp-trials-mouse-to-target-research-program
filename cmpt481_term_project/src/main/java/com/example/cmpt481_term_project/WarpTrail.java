@@ -19,6 +19,8 @@ public class WarpTrail {
     private final double thicknessFadeStep = 0.09;
     private final double opacityFadeStep = 0.03;
 
+    private boolean drawTrail;
+
     private Color startTrailColor = new Color(1.0, 0, 1.0, 1.0);
     private Color endTrailColor = new Color(0, 0, 0, 0);
 
@@ -36,6 +38,7 @@ public class WarpTrail {
         this.mouseY = mouseY;
         this.opacity = defaultOpacity;
         this.thickness = defaultThickness;
+        this.drawTrail = false;
     }
 
     /**
@@ -52,6 +55,15 @@ public class WarpTrail {
         this.mouseY = mouseY;
         this.thickness = defaultThickness;
         this.opacity = defaultOpacity;
+        this.drawTrail = true;
+    }
+
+    public boolean isDrawn(){
+        return this.drawTrail;
+    }
+
+    public void setDrawn(boolean b){
+        this.drawTrail = b;
     }
 
     /**
@@ -66,8 +78,18 @@ public class WarpTrail {
      * Method that fades the trail by one step
      */
     public void fadeStep() {
-        this.opacity = Math.max(this.opacity - opacityFadeStep, 0.00);
-        this.thickness = Math.max(this.thickness - thicknessFadeStep, 0.00);
+        //this.opacity = Math.max(this.opacity - opacityFadeStep, 0.00);
+        this.opacity = this.opacity - opacityFadeStep;
+        if (this.opacity < 0) {
+            this.opacity = 0;
+            this.drawTrail = false;
+        }
+        //this.thickness = Math.max(this.thickness - thicknessFadeStep, 0.00);
+        this.thickness = this.thickness - thicknessFadeStep;
+        if (this.thickness < 0) {
+            this.thickness = 0;
+            this.drawTrail = false;
+        }
     }
 
     /**

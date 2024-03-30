@@ -26,8 +26,8 @@ public class AppView extends StackPane implements AppModelListener {
     /**
      * Creates the basic app view
      */
-    public AppView() {
-        myCanvas = new Canvas(1500, 900);
+    public AppView(int w, int h) {
+        myCanvas = new Canvas(w, h);
         gc = myCanvas.getGraphicsContext2D();
         this.getChildren().add(myCanvas);
         gc.setTextAlign(TextAlignment.CENTER);
@@ -173,7 +173,10 @@ public class AppView extends StackPane implements AppModelListener {
                     }
                 }
                 // Draw warp trail
-                model.getWarpTrail().draw(gc);
+                if (model.getWarpTrail().isDrawn()) {
+                    model.getWarpTrail().draw(gc);
+                }
+
             }
             case DONE -> {
                 // clear canvas

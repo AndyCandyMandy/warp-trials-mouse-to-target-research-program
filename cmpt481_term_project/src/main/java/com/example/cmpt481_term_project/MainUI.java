@@ -13,8 +13,8 @@ public class MainUI extends StackPane {
     AppModel model;
     AppController controller;
 
-    private int w = 1500;
-    private int h = 900;
+    private int w = 1400;
+    private int h = 800;
 
     /**
      * Sets up the views, model, IModel, and controller as well as linking
@@ -22,7 +22,7 @@ public class MainUI extends StackPane {
     public MainUI() {
         model = new AppModel(w, h);
         controller = new AppController();
-        appView = new AppView();
+        appView = new AppView(w, h);
 
         controller.setModel(model);
         appView.setModel(model);
