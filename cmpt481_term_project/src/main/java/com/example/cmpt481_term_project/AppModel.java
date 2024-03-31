@@ -65,7 +65,10 @@ public class AppModel {
 
     private TrialMode trialMode;
 
-    private int NUM_CLUSTERS = 4;
+    // Constants for changing the number of clusters, trials and blocks of a run
+    private final int NUM_CLUSTERS = 4;
+    private final int NUM_TRIALS = 20;
+    private final int NUM_BLOCKS = 3;
 
     private Target[] clusterPoints = new CircleTarget[NUM_CLUSTERS];
 
@@ -77,6 +80,9 @@ public class AppModel {
     Random random = new Random();
     Timer fadeTimer;
     TimerTask fadeTask;
+
+    // String[] for storing data from trials
+    private ArrayList<String[]> trialData;
 
 
     /**
@@ -94,8 +100,8 @@ public class AppModel {
         this.height = h;
         this.targetRadius = 30;
         this.numTargets = 50;
-        this.numBlocks = 3;
-        this.numTrials = 20;
+        this.numBlocks = NUM_BLOCKS;
+        this.numTrials = NUM_TRIALS;
         this.showWarps = false;
         this.numOfWarps = 0;
 
@@ -123,6 +129,10 @@ public class AppModel {
 
         // get UI image
         uiImage = new Image("/UnityUI.png");
+
+        // setup data arraylist with header
+        this.trialData = new ArrayList<>();
+        this.trialData.add(new String[]{"MechID", "BlockNum", "TrialNum", "NumError", "NumWarp", "ElapsedTime", "FittsID"});
     }
 
     /**
@@ -130,6 +140,44 @@ public class AppModel {
      */
     public long getSelectionTime() {
         return System.currentTimeMillis() - selectionTime;
+    }
+
+    /**
+     * Method for adding a data entry to the stored data
+     */
+    public void recordDataEntry() {
+        //TODO: Add fitts id to data to export
+        this.trialData.add(new String[]{this.currentMechanism.toString(), String.valueOf(this.numBlocks),
+                String.valueOf(this.numTrials), String.valueOf(this.numOfErrors), String.valueOf(this.numOfWarps),
+                String.valueOf(this.getSelectionTime()), "FittID"});
+    }
+
+    /**
+     * Method to export all data as a csv file
+     */
+    private void exportAllData() {
+        // set filename - mechanism (5) and trial mode (3)
+        // 15 Different combinations
+        String filename = this.currentMechanism.toString() + "-" + this.trialMode.toString() + ".csv";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            // Iterate over the rows and write them to the CSV file
+            for (String[] row : this.trialData) {
+                // Iterate over columns within a row
+                for (int i = 0; i < row.length; i++) {
+                    writer.append(row[i]);
+                    // Add a comma if it's not the last column
+                    if (i < row.length - 1) {
+                        writer.append(",");
+                    }
+                }
+                // Add a new line character after each row
+                writer.append("\n");
+            }
+            System.out.println("CSV file " + filename + " has been created successfully.");
+        } catch (IOException e) {
+            System.err.println("Error occurred while writing to CSV file: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -715,12 +763,15 @@ public class AppModel {
                 this.numBlocks = this.numBlocks - 1;
                 if (this.numBlocks == 0) {
                     this.currentMode = AppMode.DONE;
+                    // Export the data to a csv file
+                    exportAllData();
                 } else {
-                    this.numTrials = 20;
+                    this.numTrials = NUM_TRIALS;
                     sysDefClickPositions = new ArrayList<>();
                     sysDefWarpLocations = new ArrayList<>();
                     warps = new ArrayList<>();
                     this.targets = new ArrayList<>();
+                    this.clusterPoints = new CircleTarget[NUM_CLUSTERS];
                     this.currentMode = AppMode.PRE_TRIAL;
                 }
             }

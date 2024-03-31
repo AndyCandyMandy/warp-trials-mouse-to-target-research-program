@@ -229,6 +229,9 @@ public class AppController {
                                 "Number of warps:          " + model.getWarpCount() + "\n" +
                                 "Current Mechanism:        " + model.getCurrentMechanism() + "\n");
 
+                        // Add results to the list of data
+                        model.recordDataEntry();
+
                         // Reset the timer for the next selection
                         model.getElapsedTime();
                         // Reset number of errors
