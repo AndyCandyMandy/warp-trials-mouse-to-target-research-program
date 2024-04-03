@@ -30,6 +30,7 @@ public class AppModel {
     private int numBlocks;
     private int targetRadius;
     private int currTarget;
+    private double fittsID;
 
     // Mouse information
     private double mouseX;
@@ -104,6 +105,7 @@ public class AppModel {
         this.numTrials = NUM_TRIALS;
         this.showWarps = false;
         this.numOfWarps = 0;
+        this.fittsID = 0.0;
 
         this.mouseX = 0;
         this.mouseY = 0;
@@ -135,6 +137,10 @@ public class AppModel {
         this.trialData.add(new String[]{"MechID", "BlockNum", "TrialNum", "NumError", "NumWarp", "ElapsedTime", "FittsID"});
     }
 
+    public double getFittsID(){
+        return fittsID;
+    }
+
     /**
      * Returns the current selection time
      */
@@ -146,10 +152,26 @@ public class AppModel {
      * Method for adding a data entry to the stored data
      */
     public void recordDataEntry() {
-        //TODO: Add fitts id to data to export
-        this.trialData.add(new String[]{this.currentMechanism.toString(), String.valueOf(this.numBlocks),
-                String.valueOf(this.numTrials), String.valueOf(this.numOfErrors), String.valueOf(this.numOfWarps),
-                String.valueOf(this.getSelectionTime()), "FittID"});
+        // Check whether we are on first trial (numTrials should be 20 then be reduced every successful click),
+        // if true, fittsID should be 0
+
+        // Remember the previous position
+        double prevX = mouseX;
+        double prevY = mouseY;
+
+        if (!targets.isEmpty()) {
+
+            Target currentTarget = targets.get(currTarget);
+
+            if (numTrials < 20) {
+                fittsID = calculateDistance(prevX, prevY, currentTarget.getX(), currentTarget.getY());
+            }
+
+            // Print the results
+            this.trialData.add(new String[]{this.currentMechanism.toString(), String.valueOf(this.numBlocks),
+                    String.valueOf(this.numTrials), String.valueOf(this.numOfErrors), String.valueOf(this.numOfWarps),
+                    String.valueOf(this.getSelectionTime()), String.valueOf(this.fittsID)});
+        }
     }
 
     /**
