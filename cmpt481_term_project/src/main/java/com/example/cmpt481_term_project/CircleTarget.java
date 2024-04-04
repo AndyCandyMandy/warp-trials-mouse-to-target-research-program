@@ -53,6 +53,13 @@ public class CircleTarget implements Target{
         return this.r;
     }
 
+    /**
+     * Returns the width value used in Fitts ID calculation
+     */
+    public double getWidth() {
+        return this.r * 2;
+    }
+
 
     /**
      * Gets the x position

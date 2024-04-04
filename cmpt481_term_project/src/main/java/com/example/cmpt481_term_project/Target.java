@@ -15,6 +15,7 @@ public interface Target {
     void drawTarget(GraphicsContext gc);
     double getX();
     double getY();
+    double getWidth();
     boolean isSelected();
     boolean contains(double cx, double cy);
     void select();

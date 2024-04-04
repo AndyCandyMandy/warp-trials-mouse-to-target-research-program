@@ -69,6 +69,13 @@ public class RectTarget implements Target{
     }
 
     /**
+     * Returns the width value used in Fitts ID calculation
+     */
+    public double getWidth() {
+        return (this.w + this.h) / 2;
+    }
+
+    /**
      * Retruns bool value for if it is selected
      * @return - true if selected, false otherwise
      */

@@ -223,8 +223,12 @@ public class AppController {
                     }
                     // Check whether user made correct selection
                     else {
+                        // Add results to the list of data
+                        model.recordDataEntry();
                         // Print results to console
-                        System.out.println("Time to select (ms):      " + model.getSelectionTime() + "\n" +
+                        System.out.println("Block Number:      " + model.getBlockNumber() + "\n" +
+                                "Trial Number:      " + model.getTrialNumber() + "\n" +
+                                "Time to select (ms):      " + model.getSelectionTime() + "\n" +
                                 "Number of click errors:   " + model.getErrorCount() + "\n" +
                                 "Number of warps:          " + model.getWarpCount() + "\n" +
                                 "Current Mechanism:        " + model.getCurrentMechanism() + "\n" +
@@ -239,8 +243,6 @@ public class AppController {
                     }
                     // Record click, move to next target1
                     model.recordClick(event.getX(), event.getY());
-                    // Add results to the list of data
-                    model.recordDataEntry();
 
                 } else if (event.getButton() == MouseButton.SECONDARY && model.getCurrentMechanism() != AppModel.Mechanism.SYS_DEF) {
                     // The capacity for warp locations is locked 4 areas. This check verifies the current number

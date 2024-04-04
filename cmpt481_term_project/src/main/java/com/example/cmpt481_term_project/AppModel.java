@@ -23,6 +23,8 @@ public class AppModel {
     private boolean showWarps;
     private int numOfWarps;
 
+    double prevX;
+    double prevY;
     private int height;
     private int width;
     private int numTargets;
@@ -56,6 +58,8 @@ public class AppModel {
     private boolean trackingFlick;
 
 
+
+
     public enum AppMode {MECH_SELECT, TRIAL_SELECT, PRE_TRIAL, TRIAL, DONE}
 
     private AppMode currentMode;
@@ -68,7 +72,7 @@ public class AppModel {
 
     // Constants for changing the number of clusters, trials and blocks of a run
     private final int NUM_CLUSTERS = 4;
-    private final int NUM_TRIALS = 20;
+    private final int NUM_TRIALS = 21;
     private final int NUM_BLOCKS = 3;
 
     private Target[] clusterPoints = new CircleTarget[NUM_CLUSTERS];
@@ -141,6 +145,14 @@ public class AppModel {
         return fittsID;
     }
 
+    public int getBlockNumber() {
+        return NUM_BLOCKS - (this.numBlocks - 1);
+    }
+
+    public int getTrialNumber() {
+        return NUM_TRIALS - this.numTrials;
+    }
+
     /**
      * Returns the current selection time
      */
@@ -153,23 +165,24 @@ public class AppModel {
      */
     public void recordDataEntry() {
         // Check whether we are on first trial (numTrials should be 20 then be reduced every successful click),
-        // if true, fittsID should be 0
-
-        // Remember the previous position
-        double prevX = mouseX;
-        double prevY = mouseY;
-
         if (!targets.isEmpty()) {
 
             Target currentTarget = targets.get(currTarget);
 
-            if (numTrials < 20) {
-                fittsID = calculateDistance(prevX, prevY, currentTarget.getX(), currentTarget.getY());
+            if (numTrials < NUM_TRIALS) {
+                System.out.println();
+                fittsID = Math.log(  (2 * calculateDistance(prevX, prevY, currentTarget.getX(), currentTarget.getY())  ) / currentTarget.getWidth()) / Math.log(2);
+            } else {
+                fittsID = 0;
             }
 
+            // Remember the previous position AFTER calculating FItts ID
+            prevX = mouseX;
+            prevY = mouseY;
+
             // Print the results
-            this.trialData.add(new String[]{this.currentMechanism.toString(), String.valueOf(this.numBlocks),
-                    String.valueOf(this.numTrials), String.valueOf(this.numOfErrors), String.valueOf(this.numOfWarps),
+            this.trialData.add(new String[]{this.currentMechanism.toString(), String.valueOf(this.getBlockNumber()),
+                    String.valueOf(this.getTrialNumber()), String.valueOf(this.numOfErrors), String.valueOf(this.numOfWarps),
                     String.valueOf(this.getSelectionTime()), String.valueOf(this.fittsID)});
         }
     }
