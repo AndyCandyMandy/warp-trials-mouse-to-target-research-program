@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 
 public class AppModel {
+    /*  */
     private List<AppModelListener> subscribers;
     private List<Target> targets;
     private List<WarpLocation> warps;
@@ -45,20 +46,15 @@ public class AppModel {
     private int gridRow = 5; // Default 5
     private int gridCollumn = 4; // Default 4
 
-
     // System-defined Warp Mechanism attributes
     protected boolean sysDefTargetSelection = false;
     protected List<Point2D> sysDefClickPositions;
     protected List<Point2D> sysDefWarpLocations;
 
-
     // Flick mechanism related attributes
     private double flickX, flickY;
     private final double minFlickDistance = 30.0;
     private boolean trackingFlick;
-
-
-
 
     public enum AppMode {MECH_SELECT, TRIAL_SELECT, PRE_TRIAL, TRIAL, DONE}
 
@@ -79,8 +75,6 @@ public class AppModel {
 
     // Real UI image
     Image uiImage;
-
-
     private Mechanism currentMechanism;
     Random random = new Random();
     Timer fadeTimer;
@@ -124,7 +118,6 @@ public class AppModel {
         // set default trial mode to RANDOM_TARGETS
         this.trialMode = TrialMode.CLUSTER_TARGETS;
 
-
         // Create timer and timertask for fading out mouse trail
         fadeTimer = new Timer();
 
@@ -141,14 +134,29 @@ public class AppModel {
         this.trialData.add(new String[]{"MechID", "BlockNum", "TrialNum", "NumError", "NumWarp", "ElapsedTime", "FittsID"});
     }
 
-    public double getFittsID(){
+    /**
+     * Returns the Fitts ID
+     *
+     * @return
+     */
+    public double getFittsID() {
         return fittsID;
     }
 
+    /**
+     * Returns the Block number ID
+     *
+     * @return
+     */
     public int getBlockNumber() {
         return NUM_BLOCKS - (this.numBlocks - 1);
     }
 
+    /**
+     * Returns the Returns trial number
+     *
+     * @return
+     */
     public int getTrialNumber() {
         return NUM_TRIALS - this.numTrials;
     }
@@ -171,7 +179,7 @@ public class AppModel {
 
             if (numTrials < NUM_TRIALS) {
                 System.out.println();
-                fittsID = Math.log(  (2 * calculateDistance(prevX, prevY, currentTarget.getX(), currentTarget.getY())  ) / currentTarget.getWidth()) / Math.log(2);
+                fittsID = Math.log((2 * calculateDistance(prevX, prevY, currentTarget.getX(), currentTarget.getY())) / currentTarget.getWidth()) / Math.log(2);
             } else {
                 fittsID = 0;
             }
@@ -440,26 +448,56 @@ public class AppModel {
         return flickY;
     }
 
+    /**
+     * Returns the mouseX position
+     *
+     * @return
+     */
     public double getMouseX() {
         return mouseX;
     }
 
+    /**
+     * Sets the saved mouseX position
+     *
+     * @return
+     */
     public void setMouseX(double mouseX) {
         this.mouseX = mouseX;
     }
 
+    /**
+     * Gets the saved mouseY position
+     *
+     * @return
+     */
     public double getMouseY() {
         return mouseY;
     }
 
+    /**
+     * Sets the saved mousey position
+     *
+     * @return
+     */
     public void setMouseY(double mouseY) {
         this.mouseY = mouseY;
     }
 
+    /**
+     * Returns the warp trail object
+     *
+     * @return
+     */
     public WarpTrail getWarpTrail() {
         return warpTrail;
     }
 
+    /**
+     * Sets the warp trail position
+     *
+     * @return
+     */
     public void setWarpTrail(double endPointX, double endPointY, double mouseX, double mouseY) {
         warpTrail.setCoords(endPointX, endPointY, mouseX, mouseY);
         notifySubscribers();
@@ -511,18 +549,38 @@ public class AppModel {
         return showWarps;
     }
 
+    /**
+     * Gets the list og grid positions
+     *
+     * @return
+     */
     public List<GridPointer> getGridList() {
         return this.gridPoints;
     }
 
+    /**
+     * Returns the grid row
+     *
+     * @return
+     */
     public int getGridRow() {
         return this.gridRow;
     }
 
+    /**
+     * Returns the grid column
+     *
+     * @return
+     */
     public int getGridCollumn() {
         return this.gridCollumn;
     }
 
+    /**
+     * Sets the grid points x and y values
+     *
+     * @return
+     */
     public void setUpGridPoints(double x, double y) {
         double xPos = this.width / x;
         double yPos = this.height / y;
@@ -538,6 +596,11 @@ public class AppModel {
         }
     }
 
+    /**
+     * Returns th up warp position
+     *
+     * @return
+     */
     public int warpUpGrid(double x, double y) {
         double adjacentY = 0;
         double shortestX = this.width;
@@ -559,6 +622,11 @@ public class AppModel {
         return numPos;
     }
 
+    /**
+     * Returns warp down position
+     *
+     * @return
+     */
     public int warpDownGrid(double x, double y) {
         double adjacentY = this.height;
         double shortestX = this.width;
@@ -580,6 +648,11 @@ public class AppModel {
         return numPos;
     }
 
+    /**
+     * Returns warp left position
+     *
+     * @return
+     */
     public int warpLeftGrid(double x, double y) {
         double adjacentX = 0;
         double shortestY = this.height;
@@ -601,6 +674,11 @@ public class AppModel {
         return numPos;
     }
 
+    /**
+     * Returns the warp right position
+     *
+     * @return
+     */
     public int warpRightGrid(double x, double y) {
         double adjacentX = this.width;
         double shortestY = this.height;
@@ -622,6 +700,11 @@ public class AppModel {
         return numPos;
     }
 
+    /**
+     * Find and returns a grid pointer
+     *
+     * @return
+     */
     public GridPointer findGridPoint(double x, double y) {
         for (GridPointer point : this.gridPoints) {
             point.mouseInRadius(x, y);
@@ -817,6 +900,11 @@ public class AppModel {
         notifySubscribers();
     }
 
+    /**
+     * Returns the menu to the mechanisms select screen
+     *
+     * @return
+     */
     public void returnToMechanismSelect() {
         switch (this.currentMode) {
             case PRE_TRIAL -> this.currentMode = AppMode.MECH_SELECT;
@@ -917,8 +1005,8 @@ public class AppModel {
                 double width = Double.parseDouble(parts[2]);
                 double height = Double.parseDouble(parts[3]);
 
-                double horizRatio = this.width/1500.0;
-                double vertRatio = this.height/900.0;
+                double horizRatio = this.width / 1500.0;
+                double vertRatio = this.height / 900.0;
 
                 // Create RectTarget object and add it to the list
                 RectTarget t = new RectTarget(x * horizRatio, y * vertRatio, width * horizRatio, height * vertRatio);

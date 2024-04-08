@@ -37,6 +37,7 @@ public class CircleTarget implements Target{
         } else {
             gc.setFill(Color.LIGHTBLUE);
         }
+        gc.setLineWidth(1); /* Fixed the BOLD-BUG */
         gc.setStroke(Color.BLACK);
         gc.fillOval(x - r, y - r, r * 2, r * 2);
         gc.strokeOval(x - r, y - r, r * 2, r * 2);
