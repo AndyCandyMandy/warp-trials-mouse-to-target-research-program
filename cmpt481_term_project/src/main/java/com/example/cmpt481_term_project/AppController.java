@@ -131,6 +131,11 @@ public class AppController {
         }
     }
 
+    /**
+     * Executes a warp from key press
+     *
+     * @param k - The input key
+     */
     private void warp(KeyCode k) {
         if (k == KeyCode.DIGIT1 && !model.getWarps().isEmpty()) {
             warpMouse(1);
@@ -143,7 +148,11 @@ public class AppController {
         }
     }
 
-
+    /**
+     * Warps the mouse
+     *
+     * @param locationNumber - The location of the warp number
+     */
     public void warpMouse(int locationNumber) {
         // Patch a tiny bug. Will delete later
         if (locationNumber == 0) {
@@ -163,7 +172,6 @@ public class AppController {
             robot.mouseMove(screenCoords.getX(), screenCoords.getY());
             model.setWarpTrail(warpX, warpY, model.getMouseX(), model.getMouseY());
 
-            // TODO - Bug, double warping causes line to be misaligned
             // Because the mouse has warped/"moved" the mouseX and mouseY need to be updated
             model.setMouseX(warpX);
             model.setMouseY(warpY);
@@ -271,6 +279,11 @@ public class AppController {
         }
     }
 
+    /**
+     * Handles mouse moved
+     *
+     * @param mouseEvent - The mouse event
+     */
     public void handleMouseMoved(MouseEvent mouseEvent) {
         model.setMouseX(mouseEvent.getX());
         model.setMouseY(mouseEvent.getY());
@@ -305,6 +318,11 @@ public class AppController {
 
     }
 
+    /**
+     * Handles a key release
+     *
+     * @param keyEvent - The key event
+     */
     public void handleKeyReleased(KeyEvent keyEvent) {
         switch (model.getCurrentMode()) {
             case TRIAL -> {
