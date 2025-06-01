@@ -1,8 +1,8 @@
-module com.example.cmpt481_term_project {
+module com.example.warp_trial_program {
     requires javafx.controls;
     requires javafx.fxml;
 
 
-    opens com.example.cmpt481_term_project to javafx.fxml;
-    exports com.example.cmpt481_term_project;
+    opens com.example.warp_trial_program to javafx.fxml;
+    exports com.example.warp_trial_program;
 }
